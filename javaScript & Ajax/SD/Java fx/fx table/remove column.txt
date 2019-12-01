@@ -1,0 +1,5 @@
+To remove a column based on view we can use a simple trick;
+
+we can use setVisible() method.
+
+just add columnName.setVisible(true/false) in our desired action.

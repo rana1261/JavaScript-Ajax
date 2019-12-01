@@ -1,0 +1,13 @@
+var status=$row.find('td:eq(4) input').prop("checked");
+
+//alert("status " + status);
+
+if (status==true) {
+	//alert("true");
+$('#modalPRMstActive').prop('checked', true);
+}
+
+else {
+	//alert("false");
+$('#modalPRMstActive').prop('checked', false);	
+}

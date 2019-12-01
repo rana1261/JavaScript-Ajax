@@ -1,0 +1,202 @@
+/************************************************
+
+save data in a modal
+
+************************************************/
+
+/***********************************************
+1. html code for save button
+************************************************/
+
+button in modal footer
+=======================
+
+<div class="modal-footer">
+        <button  class="btn btn-primary form-control-sm" id="modalPRMstSave">Save</button> 
+        <!-- <input id="modalPRMstSave" value="Save" type="button" class="btn btn-primary btn-sm "> -->
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+
+
+/********************************************
+2. Write save method in dao and daoImp
+***********************************************/
+
+dao
+=====
+public void savePurchaseList(ModelPurchaseList modelPurchaseList);
+
+daoImp
+=======
+
+@Autowired
+	public PurchaseListRepository purchaseListRepository;
+
+
+@Override
+	public void savePurchaseList(ModelPurchaseList modelPurchaseList) {
+		
+		purchaseListRepository.save(modelPurchaseList);
+		
+	}
+
+
+3. Repository
+public interface SamityRegistrationRepository extends JpaRepository <ModelSamityRegistration,Long>{ 
+}
+
+
+/************************************
+4. Controller method
+*************************************/
+
+4.1. annotation 
+==================
+@RequestMapping(path="/prcontroller/prmstSave",method=RequestMethod.POST)
+	@ResponseBody
+
+4.2.  method declaration
+==============================
+public List<ModelPRMstCustom> pRMstSave(Model model,ModelPRMst modelPRMst) {
+
+
+}
+
+
+4.3.
+include @RequestParam if data from view is required to pass this method.
+=========================================================================
+
+public List<ModelPRMstCustom> pRMstSave(Model model,ModelPRMst modelPRMst,
+				  @RequestParam("PRMstId") Long pRMstId,
+		          @RequestParam("PRMstClientId") Long pRMstClientId,
+		          @DateTimeFormat(pattern="yyyy-MM-dd")@RequestParam("PRMstDate") Date pRMstDate,
+		          @RequestParam("PRMstRemarks") String pRMstRemarks,
+		          @RequestParam("PRMstActiveStatus") int pRMstActiveStatus
+		          ) {
+
+
+}
+
+
+4.4. Full method
+
+
+
+
+		public List<ModelPRMstCustom> pRMstSave(Model model,ModelPRMst modelPRMst,
+				  @RequestParam("PRMstId") Long pRMstId,
+		          @RequestParam("PRMstClientId") Long pRMstClientId,
+		          @DateTimeFormat(pattern="yyyy-MM-dd")@RequestParam("PRMstDate") Date pRMstDate,
+		          @RequestParam("PRMstRemarks") String pRMstRemarks,
+		          @RequestParam("PRMstActiveStatus") int pRMstActiveStatus
+		          ) {
+		
+		System.out.println("Save PRMst  ");
+
+		
+		    java.util.Date date = new java.util.Date();
+		    java.sql.Timestamp entryTime = new java.sql.Timestamp(date.getTime());
+		    
+		   // modelPRMst.setpRMstId(pRMstId);
+		    modelPRMst.setpRMstDate(pRMstDate);
+		    modelPRMst.setRemarks(pRMstRemarks);
+		    modelPRMst.setActiveStatus(pRMstActiveStatus);
+		    
+		    Long logonUserId=systemUserId;
+		    
+		    ModelUser modelUser1 = new ModelUser();
+	            modelUser1.setUserId(logonUserId);
+	        
+		    modelPRMst.setEnteredBy(modelUser1);
+		    modelPRMst.setEntryTimestamp(entryTime);
+		    
+		    ModelClient modelClient=new ModelClient();
+		    modelClient.setClientId(pRMstClientId);
+		    
+		    modelPRMst.setModelClient(modelClient);
+		    
+		    if (pRMstId !=null) {
+		    	
+		    	modelPRMst.setpRMstId(pRMstId);
+		    	modelPRMst.setUpdatedBy(modelUser1);
+		    	modelPRMst.setUpdateTimestap(entryTime);
+		    }
+		    
+		    daoPR.savePRMst(modelPRMst);
+		    
+		   
+		   List<ModelPRMstCustom> modelPRMstList=new ArrayList<ModelPRMstCustom>();
+		   
+		   modelPRMstList=daoPR.getPRMstSearchData(null,pRMstActiveStatus,modelPRMst.getpRMstId());
+		   System.out.println("size " + modelPRMstList.size() );
+		   
+		 
+		
+		return modelPRMstList;
+		
+		
+	
+	}
+
+
+/*********************************************
+5. add javascript code for button click
+**********************************************/
+
+
+<script type="text/javascript">
+      	
+ $('#modalPRMstSave').click(
+  function(e) {
+e.preventDefault();
+    
+      var status = document.getElementById("modalPRMstActive");
+      var pRMstId=$("#modalPRMstId").val();
+      
+      var active;
+		    		 
+		    		 if (status.checked == true){
+		    			 active='1';
+		    		 }
+		    		 else{
+		    			 active='0';
+		    		 }
+        
+          
+             
+ // data array to pass controller         
+                 var formData= { 
+                        "PRMstId" : $("#modalPRMstId").val(),
+                        "PRMstDate" : $("#modalPRMstDate").val(),
+                        "PRMstClientId" : $("#modalPRMstClientId").val(),
+                        "PRMstRemarks" : $("#modalPRMstRemarks").val(),
+                        "PRMstActiveStatus" : active
+                        
+                               };
+                               
+// ajax function                        
+                               $.ajax({
+                                        type : "POST",
+                                       url : "/prcontroller/prmstSave",
+                                       dataType : 'json',
+	                               data : formData,
+                                                                  
+                                       success: function(result){
+                                                                  	                                                                  
+	                               $.each(result, function(i,pRMstCustom){    
+                            
+                                       $('#modalPRMstId').val(pRMstCustom.pRMstId);
+
+                                       $('#modalPRMstMessage').text("Saved Successfully");
+
+                    
+	                                  });        // each
+
+                                           }   // end success                                        
+	                              
+		                             });   // end ajax          
+                
+              });
+       
+ </script>

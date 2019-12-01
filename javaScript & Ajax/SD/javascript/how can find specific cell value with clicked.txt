@@ -1,0 +1,13 @@
+=========================================================How can get specific cell value from table with java script===========================================================
+
+Follow this code :
+
+ <script>
+   $("#myTable").on('click','.woMstId',function(){
+	    var $row = $(this).closest("tr");    // Find the row
+	    var id = $row.find(".woMstId").text(); // Find the text
+	    
+	    // Let's test it out
+	    alert(id);
+	    
+	   

@@ -1,0 +1,4 @@
+set value dynamically in input tag
+==================================
+
+ $('#modalPRMstId').val(pRMst.pRMstId);

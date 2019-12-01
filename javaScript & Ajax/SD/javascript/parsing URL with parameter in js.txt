@@ -1,0 +1,28 @@
+myTable is id of table & search result was shown in ajax
+
+========================================================
+$("#myTable").on('click','.tdEdit',function(){
+    
+    alert("in table click function");
+    
+    var $row = $(this).closest("tr");
+    
+    var clientServiceId =$row.find(".tdClientServiceId").text();
+    
+    window.location.href = '/clientservicecontroller/update/'+clientServiceId;
+    
+     });
+===========================================================================
+resource:
+https://stackoverflow.com/questions/1226714/how-to-get-the-browser-to-navigate-to-url-in-javascript
+
+
+onClick="location.reload()"
+
+
+
+
+
+
+
+

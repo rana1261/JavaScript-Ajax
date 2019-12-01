@@ -1,0 +1,32 @@
+1. table html
+1. find table html
+<table id="tableId">
+<tr>
+<td class="col1"> </td> 
+<td class="col1"> </td> 
+<td class="btn1"><input type="button"/> </td> 
+
+
+</tr>
+
+
+
+</table>
+
+2. find table row button on which click event table row data is found
+
+3. make js function
+
+
+<script type="text/javascript">
+      	
+
+$('#tableId').on('click', 'btn', function(){
+ 
+    $row=$(this).closest("tr");
+
+$valueCol1=$row.find('.col1').val();
+
+});
+
+</script>

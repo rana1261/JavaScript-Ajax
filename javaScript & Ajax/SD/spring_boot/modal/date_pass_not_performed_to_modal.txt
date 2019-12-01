@@ -1,0 +1,2 @@
+date parameter not pass purchase list search data for edit
+

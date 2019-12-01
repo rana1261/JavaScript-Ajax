@@ -1,0 +1,37 @@
+==================================================Get total days between two days in java=====================================================================
+
+
+                         long start=scheduleDate.getTime();
+			 long end=newEndDate.getTime();
+			 
+			 long diff=(end-start)/(1000*60*60*24);
+			 
+			 System.out.println("diff " + diff);
+			
+			 
+			 for (int i=1; i<=diff+1; i++) {
+				 
+				 System.out.println("day " + i);
+				 
+				 System.out.println("Today is :" + scheduleDate);
+				 
+	
+				ModelMachineShedule machineSchedule= new ModelMachineShedule();
+				ModelMachineShift modelShift=new ModelMachineShift(); 
+				modelShift.setMachineShiftId(shiftId);
+				 
+				machineSchedule.setActiveStatus(1);
+				machineSchedule.setEnteredBy(1L);
+				machineSchedule.setEntryTimestamp(entryTime);
+				machineSchedule.setMachineScheduleName(scheduleName);
+				machineSchedule.setModelMachineShfit(modelShift);
+				machineSchedule.setScheduleDate(scheduleDate);
+				
+				machineScheduleImp.saveSchedule(machineSchedule);
+				 
+				 
+				 			 
+				 
+				 
+			 }
+			 

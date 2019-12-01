@@ -1,0 +1,62 @@
+common methods
+===============
+
+dao interface
+===============
+Master model
+
+/*****************************************
+
+1. save data
+*******************************************/
+public void savePurchaseList(ModelPurchaseList modelPurchaseList);
+
+
+/***********************************
+ 2. find data by id
+***********************************/
+
+public List<ModelPRMst> getPRMstById(Long pRMstId);
+
+
+/************************************
+
+3. search data. In this case, custom model may be required which is not Entity model
+
+****************************************/
+	
+public List<ModelPRMstCustom> getPRMstSearchData(Long clientId,int activeStatus, Long pRMstId);
+
+####################################################################################
+
+Child Model
+############################################################
+
+
+4. public List<ModelPRMstCustom> getPRMstChdSearchData(Long clientId,int activeStatus,Long pRMstId );
+	
+        
+5. public void savePRChd(ModelPRChd modelPRChd);
+	
+	
+6. public List<ModelPRChd> getPRChdDataByPRMstId(Long pRMstId);
+
+	
+7. public List<ModelPRChd> getPRChdDataById(Long pRChdId);
+	
+	
+8. public List<ModelCountCustom> getCountPRChdRecord(Long pRMstId);
+	
+	
+9. public Optional<ModelPRChd> getPRChdById(Long pRChdId);
+
+
+
+
+
+For 7
+=====
+public interface PurchaseListRepository extends JpaRepository <ModelPurchaseList,Long> { 
+	@Query("select a from SM_PURCHASELIST a where a.purchaseListId=:purchaseListId")
+	public List<ModelPRChd> findPRChdById(@Param("purchaseListId")Long purchaseListId);
+}

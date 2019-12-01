@@ -1,0 +1,46 @@
+private ObservableList<ModelBrBuilding> getInfo(boolean x) { // declare a method
+			
+			
+			Buildingdata=FXCollections.observableArrayList(implementation.getBranch());						
+			
+			// 1. Wrap the ObservableList in a FilteredList (initially display all data).	
+	
+			FilteredList<ModelBrBuilding> filteredData = new FilteredList<>(Buildingdata,p->true);
+		    // 2. Add Listener
+
+		    txtBName.textProperty().addListener((observable,oldValue,newValue)->{
+				filteredData.setPredicate(BCode->{
+				if(newValue== null||newValue.isEmpty())
+				{	return true;
+				
+				}
+				String lowerCasefilter=newValue.toLowerCase();
+				if(BCode.getBranchName()!=null)
+				 if (BCode.getBranchName().toLowerCase().contains(lowerCasefilter)){
+					return true;
+				}
+				return false;
+				});
+				
+			});
+			txtBShort.textProperty().addListener((observable,oldValue,newValue)->{
+			filteredData.setPredicate(BCode->{
+				if(newValue== null || newValue.isEmpty())
+					return true;
+				String lowerCasefilter= newValue.toLowerCase();
+				if(BCode.getShortCode()!=null)
+				if(BCode.getShortCode().toLowerCase().contains(lowerCasefilter))
+					return true;
+				return false;
+			});
+					
+			});
+			// 3. Wrap  into a sorted list
+			 SortedList sortedData = new SortedList(filteredData);
+			 
+			    // bind with table
+			    sortedData.comparatorProperty().bind(tableBuilding.comparatorProperty());
+			    return sortedData;
+			
+			 
+		}

@@ -1,0 +1,13 @@
+for localhost
+
+Database: mysql=>  jdbc:mysql://localhost:3306/dbName?createDatabaseIfNotExist=true 
+
+N.B: It will create database too if dbName is not present.
+
+
+
+for Server
+
+Database: mysql=> jdbc:mysql://mysql.biziitech.com:3306/mlfm?createDatabaseIfNotExist=true 
+
+Database: oracle=> jdbc:oracle:thin:@oracle.biziitech.com:1521/PDB1

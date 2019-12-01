@@ -1,0 +1,9 @@
+@Author Aritra Paul; aritra@biziitech.com
+
+1. Download Intellij IDEA Ultimate free version
+2. Install it.
+3. use any one server license key given bellow
+
+http://80.211.190.88:1027 
+http://nodde.ru:1027
+http://jetbrains.tools

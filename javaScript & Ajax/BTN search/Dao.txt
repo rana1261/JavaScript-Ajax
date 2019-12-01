@@ -1,0 +1,12 @@
+package com.biziitech.attm.dao;
+
+import java.util.List;
+
+import com.biziitech.attm.bg.model.ModelTestdb;
+ 
+public interface DaoTestdb {
+	public int save(ModelTestdb modelTestdb);
+	public List<ModelTestdb> getData();
+	public List<ModelTestdb> getTestdbSearchByName(String name);
+
+}

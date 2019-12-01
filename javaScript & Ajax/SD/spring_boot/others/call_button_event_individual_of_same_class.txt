@@ -1,0 +1,21 @@
+
+html code
+==========
+
+ '<td class="pRChdBtn">'+
+                     '<a href="#" type="button" class="btn btn-success btn-sm" data-toggle="modal" id="modalEditPRMstBtn"  data-target="#modalPRMst">Edit</a>'+
+                      /*'<a href="#" type="button" class="btn btn-success btn-sm" data-toggle="modal" id="modalPRChdBtn" data-target="#modalPRChd">PR Chd</a>' +  */
+                       '<a href="#" type="button" class="btn btn-success btn-sm" data-toggle="modal" id="modalPRChdBtn" data-target="#modalPRChd">PR Chd</a>' +
+                       '<a href="#" type="button" class="btn btn-success btn-sm" data-toggle="modal" id="modalPRMstItemListBtn" data-target="#modalItemList">Item List</a>' +
+
+
+                     '</td>' +
+                    
+In the above html, three buttons have same class pRChdBtn. Now javascript function call for individual button
+
+
+
+<script type="text/javascript">
+
+$("#prmstTable").on('click','.pRChdBtn #modalEditPRMstBtn',function(){
+});

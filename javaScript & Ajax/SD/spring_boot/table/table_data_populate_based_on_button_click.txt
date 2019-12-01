@@ -1,0 +1,70 @@
+table data populate
+====================
+
+1. make a table header.
+
+              <div class="card-body">
+                  <table id="purchaseListTable"  class="table table-striped table-bordered display nowrap" style="width:100%">
+                    <thead>
+                    <tr>
+                      <th scope="col">List Name</th>
+                       <th scope="col">List Date</th>
+                     </tr>
+                   </thead>
+                       
+               </table>
+                </div>
+
+2. Write button html
+
+  <div class="col-4">
+                            <div class="form-group">
+                                <label for="searchBtn" class="control-label mb-1"></label>
+                                <input  type="button" value="Search Data for making purchase list" id="searchBtn" class="form-control btn-primary" >
+                            </div>
+
+                        </div>
+
+
+3. Write button click javascript function
+
+$('#searchBtn').click(function(e) {
+
+};
+
+3.1. Find data based on which data will be searched
+
+
+4. make ajax function in javascript function
+
+$.ajax({});
+
+4.1. Add parameters in ajax function
+
+
+$.ajax({
+
+ type : "POST",
+ url : "/#######controller/##############",
+ dataType : 'json',
+ success: function(result){
+}
+});
+
+4.2. each function can be added in success function(result)
+
+$.each();
+
+add parameter
+$.each(result, function(){});
+
+add parameter in each internal function
+$.each(result, function(i, result return type variable xyz ){ 
+
+});
+
+
+
+
+
+ 

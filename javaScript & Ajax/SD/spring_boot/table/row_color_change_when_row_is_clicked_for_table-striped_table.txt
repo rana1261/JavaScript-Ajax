@@ -1,0 +1,23 @@
+css
+=========
+
+<style>
+
+.table-striped>tbody>tr.yellow{
+    background: yellow;
+}
+
+</style>
+
+
+<script type="text/javascript">
+      	
+
+$('#prmstTable').on('click', 'tr', function(){
+ 
+    $('tr.yellow').removeClass('yellow'); 
+    $(this).addClass('yellow'); 
+
+});
+
+</script>

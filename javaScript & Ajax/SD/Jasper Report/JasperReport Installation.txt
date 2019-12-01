@@ -1,0 +1,21 @@
+It can be run both as singleton application and with eclipse ide. Choise is yours.
+
+With Eclipse.
+
+	1. Install Jasper Studio from market place.(It is requiredd for report design)
+	2. Add dependency in your pom.xml
+
+
+	<dependency>
+    	<groupId>net.sf.jasperreports</groupId>
+    	<artifactId>jasperreports</artifactId>
+    	<version>6.5.0</version>
+	</dependency>
+
+Standalone Application
+
+	1. Download JAsper Studio Community Edition from (https://community.jaspersoft.com/download) 
+	2. Install and run .exe file.
+
+
+It is advised to design report using standalone jasper studio. As in eclipse (embedded), it response quite slow.

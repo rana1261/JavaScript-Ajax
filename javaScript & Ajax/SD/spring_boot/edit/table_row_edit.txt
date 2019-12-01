@@ -1,0 +1,5 @@
+/**
+
+new data entry save with a modal. This same modal will be used for data edit. When edit button is clicked then modal will be called with data.
+
+**/

@@ -1,0 +1,63 @@
+
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+
+import org.hibernate.annotations.GenericGenerator;
+
+
+@Entity(name = "BG_USER")
+public class ModelUser {
+	@Id @GenericGenerator(name = "custom_sequence", strategy = 
+			"com.bz.em.IdGenerator")
+	@GeneratedValue(generator = "custom_sequence")
+	@Column(name = "USER_ID")
+	private Long userId;
+
+	@Column(name = "USER_NAME")
+	private String userName;
+
+	@ManyToOne
+	@JoinColumn(name="USER_TYPE_ID")
+	private ModelUserType modelUserType;
+	
+	
+	
+	@ManyToOne
+	@JoinColumn(name="SAMITY_REGISTRATION_ID")
+	private ModelSamityRegistration modelSamityRegistration;
+	
+	
+
+	@Column(name = "REMARKS")
+	private String remarks;
+
+	@Column(name = "ACTIVE_STATUS")
+	private int activeStatus;
+	
+	@Column(name = "NOT_SHOW")
+	private int notShow;
+
+	@Column(name = "ENTERED_BY")
+	private Long enteredBy;
+
+	@Column(name = "ENTRY_TIMESTAMP")
+	private Date entryTimestap;
+
+	@Column(name = "UPDATED_BY")
+	private Long  updatedBy;
+
+	@Column(name = "UPDATE_TIMESTAMP", nullable=true)
+	private Date updateTimestap;
+
+	@Column(name = "FLEX_FIELD1")
+	private String flex1;
+
+	@Column(name = "FLEX_FIELD2")
+	private String flex2;
+
+}

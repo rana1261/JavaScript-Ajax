@@ -1,0 +1,9 @@
+By creating Spring environment in Eclipse One can easily get all facilities of STS. So follow the steps...
+
+1. Install Eclipse EE version
+2. Go to Market Place and search for sts and install it.
+3. window-> preference-> Maven -> check download repository index at start up.
+4. Open perspective and choose your environment as "Spring"
+5. Create a starter project (for spring boot)/ download any boot project.
+6. Open it and right click-> Maven -> update Project
+

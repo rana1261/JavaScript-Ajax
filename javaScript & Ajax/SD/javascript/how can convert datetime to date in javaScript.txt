@@ -1,0 +1,5 @@
+
+		                                 var d = new Date(modelWOMstList.wODate);
+                                         var n = d.getMonth();
+                                         var n = d.getMonth() + 1;
+                                         d= (n.length > 1 ? n : "0" + n) + "/" + d.getDate() + "/" + d.getFullYear();

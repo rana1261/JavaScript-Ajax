@@ -1,0 +1,42 @@
+=============================================================get all days between two days in java=====================================================================
+
+
+ LocalDate newEndDate= endDate;
+		        
+		        LocalDate specificEndDate=newEndDate.plusDays(1);
+				
+				
+				for(LocalDate date1= startDate; date1.isBefore(specificEndDate); date1 = date1.plusDays(1))
+				{
+					SimpleDateFormat dt1 = new SimpleDateFormat("yyyy-MM-dd");
+					
+					Date checkDate=dt1.parse(date1.toString());
+					
+					List<ModelMachineScheduleData> data=machineScheduleImp.checkScheduleData(machineId, machineTypeId, shiftId, checkDate);
+					
+					if(data.size()==0) {
+						
+						 ModelMachineShedule machineSchedule= new ModelMachineShedule();
+						   
+						    ModelMachineShift modelShift=new ModelMachineShift(); 
+							modelShift.setMachineShiftId(shiftId);
+							 
+							machineSchedule.setActiveStatus(1);
+							machineSchedule.setEnteredBy(1L);
+							machineSchedule.setEntryTimestamp(entryTime);
+							machineSchedule.setMachineScheduleName(scheduleName);
+							machineSchedule.setModelMachineShfit(modelShift);
+							
+							
+							
+							Date newDate=dt1.parse(date1.toString());
+										
+							machineSchedule.setScheduleDate(newDate);
+							
+							System.out.println("Today is :" + newDate);
+							
+						
+							machineScheduleImp.saveSchedule(machineSchedule);
+													
+						
+					}

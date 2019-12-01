@@ -1,0 +1,18 @@
+  
+
+===============================================================================Find cell value========================================================================
+
+if you want to find cell value from a table with rfer checkbox , use this code
+
+$('#wochdTable tr').filter(':has(:checkbox:checked)').find('td').each(function() { 
+
+ var wochdId = $(this).find("td:eq(1)").html();
+
+});
+
+
+================================================================================You can also used=====================================================================
+
+$('#wochdTable tr').filter(':has(:checkbox:checked)').each(function() { 
+		    var wochdId = $(this).find("td:eq(1)").html();
+});

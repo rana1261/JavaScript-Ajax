@@ -1,0 +1,3 @@
+To use native query in our repository class we have to make nativeQuery property true like below.
+
+		@Query( value = "SELECT * FROM USERS u WHERE u.status = 1", nativeQuery = true)

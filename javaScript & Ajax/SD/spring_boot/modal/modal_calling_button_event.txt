@@ -1,0 +1,275 @@
+/****************************************
+
+1. add button in html page
+
+****************************************/
+html
+====
+
+button in table
+============
+'<td class="pRChdBtn">'+
+                     '<a href="#" type="button" class="btn btn-success btn-sm" id="modalEditPRMstBtn" data-toggle="modal" data-target="#modalPRMst">Edit</a>'+
+                      '<a href="#" type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#modalPRChd">PR Chd</a>' +
+
+ '</td>'
+
+
+button in single form
+=====================
+
+  <div class="col-4">
+                            <div class="form-group">
+                                <label for="searchBtn" class="control-label mb-1"></label>
+                                <input  type="button" value="Search Data for making purchase list" id="########Btn" class="form-control btn-primary" data-toggle="modal" data-target="#modalPRMst" >
+                          <!-- OR USE <a> tag
+
+                         '<a href="#" type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#modalPRChd">PR Chd</a>'
+
+                          -->
+
+
+ </div>
+
+     </div>
+
+1.1. modal calling code
+In button <a> tag, include data-toggle and data-target attributes. Values of data-toggle and data-target will be of "modal" and "modal id"
+
+/**********************************************
+2. add modal in html
+**********************************************/
+
+<!-- =====================================Modal-1 (single form)================================================ -->
+
+
+<div class="modal fade" id="modalPRMst" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">PR MST</h5>
+        <span id="modalPRMstMessage"></span>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form class="needs-validation"  method="post"  novalidate>   
+      <div class="modal-body">
+        <div class="form-row">     <!-- if row -->
+        
+        	<div class="col-sm-12 col-md-3">
+        		<div class="form-group">
+        			<label class="labelcontrol">PRMST ID</label>
+        			<input name="prmstId" type="text" class="form-control form-control-sm" placeholder="Id" id="modalPRMstId" readonly>
+        		</div>
+        	</div>
+
+        	<div class="col-sm-12 col-md-3">
+        		<div class="form-group">
+        			<label class="labelcontrol">PRMST Date</label>
+        			<input name="prmstId"  type="date" class="form-control form-control-sm" placeholder="PRMst Date" id="modalPRMstDate" >
+        		</div>
+        	</div>
+        
+      
+         <div class="col-sm-12 col-md-6">
+            <div class="form-group">
+              <label class="labelcontrol">Client</label>
+            <select  class="form-control form-control-sm" id="modalPRMstClientId" name="clientId" >
+                        <option value=""> Choose Client</option>
+                        <option th:each="clist: ${clientList}"
+                          th:value="${clist.clientId}"
+                          th:utext="${clist.clientName}"
+                        ></option>
+            </select>
+            </div>
+          </div>
+        	
+      </div>
+        
+          <div class="row">	
+        	
+        	<div class="col-sm-12 col-md-9">
+        		<div class="form-group">
+        			<label class="labelcontrol">Remarks</label>
+        			<textarea cols="30" rows="5" class="form-control" placeholder="Remarks Here.." id="modalPRMstRemarks"></textarea>
+        		</div>
+        	</div>
+        	
+        	<div class="col-sm-12 col-md-3">
+        		<div class="form-group text-center">
+        			<label class="labelcontrol">Active Status</label>
+        			 <div>
+        			 <input type="checkbox"  name="active" id="modalPRMstActive">
+        			 </div>
+        		</div>
+        	</div>
+        	
+        	
+        </div>  <!-- end row -->
+      </div>
+      <div class="modal-footer">
+        <button  class="btn btn-primary form-control-sm" id="modalPRMstSave">Save</button> 
+        <!-- <input id="modalPRMstSave" value="Save" type="button" class="btn btn-primary btn-sm "> -->
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-------------------------------------------- modal-2 single form  + table ------------------------------------------------------->
+
+
+<div class="modal fade" id="modalPRChd" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">PR Chd</h5>
+        	Client: <span id="modalPRChdClientName"></span>
+        	PRMst Id:<span id="modalPRChdPRMstId"></span>
+
+        	
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form class="needs-validation"  method="post"  novalidate>
+      <div class="modal-body">
+        <div class="form-row">     <!-- if row -->
+        <!--
+        	<div class="col-sm-12 col-md-2">
+        		<div class="form-group">
+        			<label class="labelcontrol">Client Name </label>
+        			<input name="modalPRChdClientName" type="text" class="form-control form-control-sm" placeholder="Id" id="modalPRChdClientName" readonly>
+        		</div>
+        	</div>
+      
+
+        	<div class="col-sm-12 col-md-2">
+        		<div class="form-group">
+        			<label class="labelcontrol">PRMst Id</label>
+        			<input name="prmstId" type="text" class="form-control form-control-sm" placeholder="Id" id="modalPRChdPRMstId" readonly>
+        		</div>
+        	</div>
+          -->
+      
+         <div class="col-sm-12 col-md-2">
+            <div class="form-group">
+              <label class="labelcontrol">Item Type</label>
+            <select  class="form-control form-control-sm" id="modalPRChdItemType" name="itemType" >
+                        <option value=""> Choose Item Type</option>
+                        <option th:each="itlist: ${itemTypeList}"
+                          th:value="${itlist.itemTypeId}"
+                          th:utext="${itlist.itemHierarchi}"
+                        ></option>
+            </select>
+            </div>
+          </div>   
+
+           <div class="col-sm-12 col-md-3">
+            <div class="form-group">
+              <label class="labelcontrol">Item Name</label>
+            <select  class="form-control form-control-sm" id="modalPRChdItemId" name="itemName" >
+                  <option value=""> Choose Item </option>
+                        <option th:each="itm: ${itemList}"
+                          th:value="${itm.itemId}"
+                          th:utext="${itm.itemName}"
+                        ></option>
+            </select>
+            </div>
+          </div>
+
+          <div class="col-sm-12 col-md-1">
+        		<div class="form-group">
+        			<label class="labelcontrol">Qty</label>
+        			<input type="text" class="form-control form-control-sm" placeholder="Remarks Here.." id="modalPRChdQty" name="qty">
+        		</div>
+        	</div>
+
+        	<div class="col-sm-12 col-md-2">
+        		<div class="form-group">
+        			<label class="labelcontrol">UOM</label>
+        		
+        			<select class="form-control form-control-sm" id="modalPRChdUOM" name="uom">
+        				<option th:each="u:${uomList}"
+        				        th:value="${u.uomId}"
+                                th:utext="${u.uomName}"
+        				        ></option>
+
+        			</select>
+        		</div>
+        	</div>
+
+        	<div class="col-sm-12 col-md-2">
+        		<div class="form-group">
+        			<label class="labelcontrol">Remarks</label>
+        			<textarea cols="1" rows="1" class="form-control form-control-sm" placeholder="Remarks Here.." id="modalPRChdRemarks" name="remarks"> </textarea>
+        		</div>
+        	</div>
+
+        	
+        	<div class="col-sm-12 col-md-1">
+        		<div class="form-group text-center">
+        			<label class="labelcontrol">Active</label>
+        			 <div>
+        			 <input type="checkbox" class="form-control form-control-sm" name="active" id="modalPRChdActiveStatus" checked="true">
+        			 </div>
+        		</div>
+        	</div>
+        	
+        	<div class="col-sm-12 col-md-1">
+        		<div class="form-group">
+        			<label class="labelcontrol"></label>
+        			 <button  class="btn btn-primary btn-sm form-control" id="modalPRChdAdd">Add</button> 
+        		</div>
+        		</div>
+        	
+      </div>
+        
+        
+      </div>
+     
+      </form>
+<div class="table-wrapper-scroll-y modalPRChdTable-scrollbar">
+      <table id="modalPRChdTable" class="table table-striped table-bordered table-sm display nowrap" style="width:100%">
+                                    <thead>
+										<tr>
+											<th scope="col">Sl. No</th>
+											<th scope="col">PRMst Id</th>
+											<th scope="col">Item Id</th>		
+                      <th scope="col">Item Name</th> 		
+                      <th scope="col">Item Qty</th>  
+                       <th scope="col">UOM Id</th> 
+                       <th scope="col">UOM</th>     							
+											<th scope="col">Remarks</th>			
+											<th scope="col">Action</th>
+											
+										</tr>
+									</thead>
+                                    <tbody>
+                                        
+                                     
+                                       
+
+                                    </tbody>
+                                </table>
+            </div>
+
+          <div class="modal-footer">
+        
+         <input id="modalPRChdSave" value="Save" type="button" class="btn btn-primary btn-sm "> 
+       <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Close</button>  
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<!--############################################################################ END MODAL ######################################-->
+

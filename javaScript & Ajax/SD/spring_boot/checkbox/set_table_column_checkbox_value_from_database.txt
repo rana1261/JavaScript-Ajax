@@ -1,0 +1,93 @@
+/***********************************/
+ This block codes are important only
+/**********************************/
+
+
+
+<script type="text/javascript">
+      	
+$('#prmstTable').on('click', '.prmstId', function(){
+//alert("test");
+/*******************************/
+ var rowIndexNumber=0;   
+/******************************/   
+ $('#pRChdTable tbody').empty();
+$row=$(this).closest('tr');
+
+var prmstId=$row.find(".prmstId").text();
+
+
+//alert("prmstId " + prmstId);
+
+var formData= {
+
+	"prmstId" : prmstId
+};
+
+$.ajax({
+
+type: "POST",
+url: "/prcontroller/chdDataPopulateByPRMstId",
+dataType:'json',
+data: formData,
+
+success: function(result) {
+   
+ 
+   	             $.each(result, function(i,modelPRChd){
+	    			       
+	    	           var status;
+	    	           
+
+                      var customerRow = '<tr>'  +	    			            
+	    			            '<td class="pRChdTablePRChdId">'+ modelPRChd.pRChdId+'</td>' +	
+	    			            '<td class="pRChdTablePRMstId">'+ modelPRChd.modelPRMst.pRMstId+'</td>' +	    			            
+	    			            '<td class="pRChdTableItemName">' + modelPRChd.modelItem.itemName + '</td>' +
+	    			            '<td class="pRChdTableQty">' + modelPRChd.prQty + '</td>' +
+	    			            '<td class="pRChdTableUOM">' + modelPRChd.modelUOM.uomName + '</td>' +
+	    			            '<td class="pRChdTableRemarks">' + modelPRChd.remarks + '</td>' +
+/***********************************************************************************************************************************/
+	    			            '<td class ="pRChdTableStatus" id="pRChdTableStatus'  + rowIndexNumber + '">' + '</td>' +
+/***********************************************************************************************************************************/    			         	           
+	    			            '<td class="pRChdTableEditBtn">' + '<input type="button" value="Edit" class="btn btn-primary btn-md"  data-toggle="modal" data-target="#modalPRChdEdit">'+ '</td>' +
+	    			            
+			    		      
+			    		'</tr>';
+                     //alert("tt");
+
+                    $('#pRChdTable tbody').append(customerRow);
+/***********************************************************************************************************************************/
+                        var statusId='#pRChdTableStatus'+ rowIndexNumber; 
+	    	           if ( modelPRChd.activeStatus==1) {
+
+	    	           	
+
+	    	           //	status=true;
+	    	           $(statusId).html('<input type="checkbox" checked />') ;
+	    	           //alert("ttt");
+
+	    	           }
+
+	    	           else {
+	    	            $(statusId).html( '<input type="checkbox" />' );
+	    	         //alert("tttttt");
+
+	    	          }
+	    	           
+	    			   
+	                // alert("customer row " +$('#pRChdTable tbody').html() );
+
+	    	          rowIndexNumber=rowIndexNumber+1;
+/***********************************************************************************************************************************/
+
+   });
+
+}        // end success
+
+
+});
+
+
+});
+
+      </script>

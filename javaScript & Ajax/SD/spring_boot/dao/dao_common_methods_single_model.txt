@@ -1,0 +1,27 @@
+common methods
+===============
+
+dao interface
+===============
+/*****************************************
+
+1. save data
+*******************************************/
+public void savePurchaseList(ModelPurchaseList modelPurchaseList);
+
+
+/***********************************
+ 2. find data by id
+***********************************/
+
+public List<ModelPRMst> getPRMstById(Long pRMstId);
+
+
+/************************************
+
+3. search data. In this case, custom model may be required which is not Entity model
+
+****************************************/
+	
+public List<ModelPRMstCustom> getPRMstSearchData(Long clientId,int activeStatus, Long pRMstId);
+

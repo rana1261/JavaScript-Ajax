@@ -1,0 +1,73 @@
+1.
+<script type="text/javascript">
+	$('#category').change(
+		        function() {
+		            $.getJSON("/item/subcategory", {
+		                category : $(this).val(),
+		                ajax : 'true'
+		            }, function(data) {
+		                var html = '<option value="0">Select Subcategory</option>';
+		                var len = data.length;
+		                for ( var i = 0; i < len; i++) {
+		                    html += '<option value="' + data[i].itemTypeId + '">'
+		                            + data[i].itemTypeName + '</option>';
+		                }
+		                html += '</option>';
+		                $('#subcategory').html(html);
+		            });
+		        });
+
+	</script>
+
+
+2. create method in controller
+
+@RequestMapping(path="/item/subcategory")
+	@ResponseBody
+	public List<ModelItemType> findSubcategory(@RequestParam("category") Long categoryId){
+		
+		return daoItemType.findItemSubcategory(categoryId);
+		
+	}
+	
+		        
+3. if dao method not exists
+@Autowired
+Repository repository
+
+@Override
+	public List<ModelDistrict> getDistrictListByDivisionId(Long divisionId) {
+		
+	}
+
+
+4. Repository ( if not exists)
+
+public interface DistrictRepository extends JpaRepository<ModelDistrict,Long>{ 
+
+	@Query("select a from BG_DISTRICT a where a.modelDivision.divisionId=:divisionId and a.activeStatus=1 order by a.districtName" )
+	public List<ModelDistrict> findDistrictListByDivisionId(@Param("divisionId") Long divisionId);
+	
+}
+
+
+
+5. html ( if required)
+
+
+4. html
+
+	<div class="col-3">
+		<div class="form-group">
+		<label >Cluster Name<span class="req">*</span></label>
+		<select class="form-control" id="clusterId" name ="clusterId" th:field="*{modelCluster.clusterId}" placeholder="Cluster Name"  >
+		<option value="">Select Cluster</option>
+		<option	th:each="modelCluster:${modelCluster}"
+			th:value="${modelCluster.clusterId}"
+			th:utext="${modelCluster.clusterName}"/>
+			
+		</select>
+		</div>
+		</div>
+
+		        

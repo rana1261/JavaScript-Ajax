@@ -1,0 +1,493 @@
+1. button html
+
+
+ <div class="col-2">
+                            <div class="form-group">
+                                <label for="" class="control-label mb-1"></label>
+                                <input   type="Button" id="searchBtn" value="Search" class="form-control btn-primary btn-sm" id="searchBtn" aria-required="true" aria-invalid="false" name=""  >
+                            </div>
+
+                        </div>
+
+find html for search criteria with which search is done.
+
+/****************************
+2. dao part
+*****************************/
+2.1. Method declaration at Dao interface
+public List<ModelPRMstCustom> getPRMstSearchDataForPO(Long clientId);
+
+
+2.2. Method implementation at Dao class
+/****************************************************
+
+Required class declaration. Class may search data in two ways- like hibernate jpa query, jdbc query
+**************************************************/
+/*******************************************************
+
+2.2.1 hibernate jpa query
+
+/*********************
+
+public interface PurchaseListRepository extends JpaRepository <ModelPurchaseList,Long> { 
+	@Query("select a from SM_PURCHASELIST a where a.purchaseListId=:purchaseListId")
+	public List<ModelPurchaseList> findPurchaseListById(@Param("purchaseListId")Long purchaseListId);
+
+
+	@Query("select a from SM_PURCHASELIST a where a.purchaseListDate between coalesce(:fromDate,a.orderDate) and coalesce(:toDate,a.orderDate) ")
+	public List<ModelPurchaseList> findPurchaseListSearch(@Param("fromDate")@DateTimeFormat(pattern="yyyy-MM-dd")Date fromDate,@Param("toDate")@DateTimeFormat(pattern="yyyy-MM-dd")Date toDate);
+
+
+/*	
+	@Query("select a from MLFM_ORDER a where UPPER(trim(a.modelOrderOwner.ownerName)) LIKE CONCAT('%',upper(TRIM(:initialBuyer)),'%') and UPPER(trim(a.ultimateOwner.ownerName)) LIKE CONCAT('%',upper(TRIM(:ultimateBuyer)),'%') and upper(TRIM(a.enteredBy.userName)) LIKE CONCAT('%',upper(TRIM(:user)),'%') and a.orderDate BETWEEN coalesce(:stDate,a.orderDate) AND coalesce(:endDate,a.orderDate)")
+	public List<ModelOrder> findOrderOnCriteria(@Param("initialBuyer") String initialBuyer,@Param("ultimateBuyer")String ultimateBuyer,@Param("user")String user,@Param("stDate")@DateTimeFormat(pattern="yyyy-MM-dd")Date stDate,@Param("endDate")@DateTimeFormat(pattern="yyyy-MM-dd")Date endDate);
+*/
+}
+
+Dao class
+==========
+
+@Autowired
+	PRMstRepository pRMstRepository;
+
+
+@Override
+		public List<ModelPRMstCustom> getPRMstSearchDataForPO(Long clientId) {
+
+return pRMstRepository.method();
+}
+
+
+
+
+/*******************************************************
+
+2.2.2 jdbc query
+
+/*********************
+
+
+
+
+	@Autowired
+    private DataSource dataSource;
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+	
+        public void setDataSource(DataSource dataSource) {
+            this.dataSource = dataSource;
+            this.jdbcTemplate = new JdbcTemplate(dataSource);
+          }
+        
+        
+       
+      
+    	@Autowired
+    	private NamedParameterJdbcTemplate namedJdbcTemplate;
+        public void setNamedDataSource(DataSource dataSource) {
+            this.dataSource = dataSource;
+            this.namedJdbcTemplate=namedJdbcTemplate;
+              }
+	
+	@Autowired
+	PRMstRepository pRMstRepository;
+
+
+@Override
+		public List<ModelPRMstCustom> getPRMstSearchDataForPO(Long clientId) {
+			String qry="select distinct a.prmst_id, a.prmst_date, e.client_name, a.remarks, a.active_status from SM_PRMST a inner join SM_PRCHD b ON a.PRMST_ID=b.PRMST_ID " +
+			" inner join SM_ITEM c ON b.ITEM_ID=c.ITEM_ID left outer join SM_ITEM_TYPE d ON c.item_type_id=d.item_type_id " +
+		    " inner join SM_CLIENT e ON a.CLIENT_ID=e.CLIENT_ID " +
+			" where  e.client_id= coalesce(:clientId,e.client_id) " +
+		    " and not exists (SELECT 1 FROM SM_POMST pm " +
+			 " WHERE pm.prmst_id= a.prmst_id ) "  +
+			" order by a.prmst_date desc";
+			
+			
+					RowMapper<ModelPRMstCustom> pRMstMapper=new RowMapper<ModelPRMstCustom>() {
+						@Override
+						public ModelPRMstCustom mapRow(ResultSet rs, int rownum) throws SQLException{
+							ModelPRMstCustom bn=new ModelPRMstCustom();
+					
+							bn.setpRMstId(rs.getLong("prmst_id"));
+							bn.setpRMstDate(rs.getDate("prmst_date"));
+							bn.setClientName(rs.getString("client_name"));
+						    bn.setRemarks(rs.getString("remarks"));
+						    bn.setActiveStatus(rs.getInt("active_status"));
+								 
+						return bn;
+						
+						}	
+					};
+					
+					
+					MapSqlParameterSource parameters = new MapSqlParameterSource();
+					
+					 
+					  parameters.addValue("clientId", clientId);
+				     
+				     
+				    System.out.println("query for when select Inquiry : " + qry);
+					
+					return  namedJdbcTemplate.query(qry,parameters,pRMstMapper);
+					
+			
+		}
+
+/*************************************
+3. Repository part if it is required
+**************************************/
+
+public interface PRMstRepository extends JpaRepository<ModelPRMst, Long> {
+	@Query("select a from SM_PRMST a where a.pRMstId=:id")
+	public List<ModelPRMst> findPRMstById(@Param("id")Long id);
+		
+}
+
+
+/*********************************************************************************
+
+4. search button click javascript function
+
+**********************************************************************************/
+4.1. find button id
+
+id=searchBtn
+
+4.2. make js function
+ <script type="text/javascript">
+  
+$("#searchBtn").click(function(e) {
+
+}
+
+
+4.3. prevent default submission
+e.preventDefault();
+
+4.4. variable for make dynamic checkbox id
+var rowIndexNumber=0; 
+
+4.5. Capture search criteria data based on which data will be searched
+var clientId = $("#searchClientId").val();
+/*******************************
+4.6. make formData array
+
+var formData= { 
+                       
+                       // "itemTypeId" : itemTypeId,
+                        //"itemName" : itemName,
+                        "clientId" : clientId
+                        //"remarks" : remarks,
+                        //"fromDate" : fromDate,
+                        //"toDate" : toDate,
+                       // "activeStatus" : activeStatus
+                        
+                               };
+/******************************************************************************************************************************
+4.7.  call ajax function, send request to controller through url and get data from controller method. From 9, get controller data
+*******************************************************************************************************************************
+ $.ajax({
+
+
+                      type : "POST",
+                      url : "/pocontroller/pRMstSearch",
+                      dataType : 'json',
+                      data : formData,
+                                                                  
+                     success: function(result){
+                                                           
+                                                                  
+                                               
+                                                                  
+                     $.each(result, function(i,pRMstCustom){            
+                                                              
+    
+
+                                                 
+              
+                var customerRow = '<tr>' +     
+                 '<td class="prmstChk">' + '<input type="checkbox" />' + '</td>' + 
+                                       '<td class="prmstId">' + pRMstCustom.pRMstId+'</td>' +
+                          '<td class="prmstDate">' + pRMstCustom.pRMstDate+ '</td>' +
+                          '<td class="clientName">' + pRMstCustom.clientName +'</td>' +
+                       
+                          '<td class="prmstRemarks">' +pRMstCustom.remarks+'</td>' +
+                     '<td class ="prmstActiveStatus" id="prmstActiveStatus'  + rowIndexNumber + '">' +'</td>' +
+                     '<td class="viewPOMstBtn">'+
+                     '<a href="#" type="button" class="btn btn-success btn-sm">View POMst</a>'+
+                      
+
+                     '</td>' +
+                     '<td class="generatePOMstBtn">'+
+                     '<a href="#" type="button" class="btn btn-success btn-sm">Generate POMst</a>'+
+                      
+
+                     '</td>' +
+                    
+                  
+                             
+                     '</tr>';
+                
+             
+               
+                  
+ 
+            
+                $('#prmstTable tbody').append(customerRow);
+
+/****************************************************************************************************
+
+for showing checkbox value
+
+************************************************************************************************/
+                var statusId='#prmstActiveStatus'+ rowIndexNumber; 
+
+
+                   if ( pRMstCustom.activeStatus==1) {
+
+                    //alert("active status " + pRMstCustom.activeStatus);
+                       
+                  
+                   $(statusId).html('<input type="checkbox" checked />') ;
+                   //alert("ttt");
+
+                   }
+
+                   else {
+                    $(statusId).html( '<input type="checkbox" />' );
+                 //alert("tttttt");
+
+                  }
+                   
+               
+                 
+
+                  rowIndexNumber=rowIndexNumber+1;
+
+                                                               
+                                     });        // each
+
+                                                              
+           
+                                     }   // end success
+                                          
+                                    /*      error : function(e) {
+                                                            alert("ERROR: ", e);
+                                                            console.log("ERROR: ", e);
+                                                          }
+                                       */
+                                       
+
+ });   // end ajax
+
+
+/***************************************************************************************
+
+FULL SEARCH CODE
+
+*****************************************************************************************/
+ <script type="text/javascript">
+  
+$("#searchBtn").click(function(e) {
+
+e.preventDefault();
+var rowIndexNumber=0; 
+
+var clientId = $("#searchClientId").val();
+
+
+/*
+var active = $("#searchActive").val();
+
+
+var activeStatus;
+if (active.checked==true) {
+activeStatus='1';
+}
+else {
+activeStatus='0';
+}
+*/
+
+var formData= { 
+                       
+                       // "itemTypeId" : itemTypeId,
+                        //"itemName" : itemName,
+                        "clientId" : clientId
+                        //"remarks" : remarks,
+                        //"fromDate" : fromDate,
+                        //"toDate" : toDate,
+                       // "activeStatus" : activeStatus
+                        
+                               };
+                               
+                               $('#prmstTable tbody').empty(); 
+
+
+                       $.ajax({
+
+
+                      type : "POST",
+                                                                url : "/pocontroller/pRMstSearch",
+                                                                dataType : 'json',
+                                                                data : formData,
+                                                                  
+                                                                success: function(result){
+                                                                    //alert("3");
+                                                                  
+                                                           /* document.getElementById("chdTableMassage").hidden=true;
+                                                                  
+                                                                   var text="Data saved succesfully,press close button";
+                document.getElementById("productionPlanSaveMessage").innerHTML=text;  */
+                                                                  
+                                                                $.each(result, function(i,pRMstCustom){
+                                                              
+      //alert("4");
+                
+                /*  '<td class="prmstActiveStatus">' +PRMstList.activeStatus+'</td>' + */
+
+                                                 
+              
+                var customerRow = '<tr>' +     
+                 '<td class="prmstChk">' + '<input type="checkbox" />' + '</td>' + 
+                                       '<td class="prmstId">' + pRMstCustom.pRMstId+'</td>' +
+                          '<td class="prmstDate">' + pRMstCustom.pRMstDate+ '</td>' +
+                          '<td class="clientName">' + pRMstCustom.clientName +'</td>' +
+                       
+                          '<td class="prmstRemarks">' +pRMstCustom.remarks+'</td>' +
+                     '<td class ="prmstActiveStatus" id="prmstActiveStatus'  + rowIndexNumber + '">' +'</td>' +
+                     '<td class="viewPOMstBtn">'+
+                     '<a href="#" type="button" class="btn btn-success btn-sm">View POMst</a>'+
+                      
+
+                     '</td>' +
+                     '<td class="generatePOMstBtn">'+
+                     '<a href="#" type="button" class="btn btn-success btn-sm">Generate POMst</a>'+
+                      
+
+                     '</td>' +
+                    
+                  
+                             
+                     '</tr>';
+                
+                //alert("5");
+               
+                  
+ 
+            
+                $('#prmstTable tbody').append(customerRow);
+
+                //alert("active status " + pRMstCustom.activeStatus);
+
+#########################################################################################################
+
+/*****************************************************************************************************
+
+showing database checkbox value
+
+***************************************************************************************************/
+
+                var statusId='#prmstActiveStatus'+ rowIndexNumber; 
+
+
+
+                   if ( pRMstCustom.activeStatus==1) {
+
+                   
+                       
+                  
+                   $(statusId).html('<input type="checkbox" checked />') ;
+                
+
+                   }
+
+                   else {
+                    $(statusId).html( '<input type="checkbox" />' );
+                
+
+                  }            
+
+                  rowIndexNumber=rowIndexNumber+1;
+
+              #################################################################################3                                                 
+                                                                                  
+                                  });        // each
+
+                                                        
+           
+                           }   // end success
+                                          
+                                    /*      error : function(e) {
+                                                            alert("ERROR: ", e);
+                                                            console.log("ERROR: ", e);
+                                                          }
+                                       */
+                         });   // end ajax
+                                        
+
+
+});
+
+</script>
+
+
+
+/******************************
+3. Controller part
+******************************/
+
+3.1. method base part:
+
+@ResponseBody
+	@RequestMapping(value="/pocontroller/pRMstSearch", method = RequestMethod.POST)
+	     public List<ModelPRMstCustom>  getPRSearchData(Model model,
+			       @RequestParam("clientId")Long clientId
+			       
+			         
+			       ) 
+		      
+
+	     {      
+
+           }
+
+
+3.2. Assign the required model with @RequestParam values or it may not be essential where individual @RequestParam is enough.
+
+@ResponseBody
+	@RequestMapping(value="/pocontroller/pRMstSearch", method = RequestMethod.POST)
+	     public List<ModelPRMstCustom>  getPRSearchData(Model model,
+			       @RequestParam("clientId")Long clientId
+			       
+			         
+			       ) 
+		      
+
+	     {      
+		            	  
+		            	  // Date startdate = new SimpleDateFormat("yyyy-MM-dd").parse(work_start_date);
+					    	//Date enddate=new SimpleDateFormat("yyyy-MM-dd").parse(work_end_date);
+					    
+					    	List<ModelPRMstCustom> pRMstList=new ArrayList<ModelPRMstCustom>();
+				      		
+				      		//woDataList=	daoWorkOrder.getWoDataListWithPI(ownerType, owner, ultimateOwner, user, cluster, startdate, enddate);
+				      				      				      		      		
+					    	pRMstList=daoPR.getPRMstSearchDataForPO( clientId);
+					    	
+					    	System.out.println("size search prmst  " + pRMstList.size() );
+				      		return pRMstList;	
+		               	                     
+			    	
+			    }
+	
+	
+3.3. get data with dao method.
+List<ModelPRMstCustom> pRMstList=new ArrayList<ModelPRMstCustom>();
+pRMstList=daoPR.getPRMstSearchDataForPO( clientId);
+
+
+
+################################################################################################################
+

@@ -1,0 +1,8 @@
+package com.biziitech.attm.dao;
+
+import com.biziitech.attm.bg.model.ModelTestdb;
+
+public interface DaoTestdb {
+	public int save(ModelTestdb modelTestdb);
+
+}

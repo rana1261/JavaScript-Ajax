@@ -1,0 +1,181 @@
+@Autowired
+	private ProductionPlanRepository productionPlanRepository;
+	
+	@Autowired
+    private DataSource dataSource;
+	
+	
+        private JdbcTemplate jdbcTemplate;
+        public void setDataSource(DataSource dataSource) {
+            this.dataSource = dataSource;
+            this.jdbcTemplate = new JdbcTemplate(dataSource);
+          }
+        
+        
+       
+      
+    	@Autowired
+    	private NamedParameterJdbcTemplate namedJdbcTemplate;
+        public void setNamedDataSource(DataSource dataSource) {
+            this.dataSource = dataSource;
+            this.namedJdbcTemplate=namedJdbcTemplate;
+              }
+        
+        @Override
+		public void saveProductionPlan(ModelProductionPlanMst productionPlan) {
+        	
+        	
+			//if(productionPlan.isActive())
+			//	productionPlan.setActiveStatus(1);
+			//else
+			//	productionPlan.setActiveStatus(0);
+			
+			productionPlanRepository.save(productionPlan);
+			
+		}
+		
+		@Override
+		public List<ModelUser> getUserList() {
+			
+			//List<ModelShift> resultList = machineShiftRepository.getAllShift();
+			List<ModelUser> resultList = productionPlanRepository.findUser(); // findShift select all active shifts.
+			List<ModelUser> userList= new ArrayList<>();
+			for(ModelUser type: resultList) {
+				if(type.getActiveStatus()==1)
+					{
+					type.setActive(true);
+					type.setsActive("Yes");
+					}
+				else
+				{
+					type.setActive(true);
+
+					type.setsActive("No");
+				}
+				userList.add(type);
+			}
+			
+			
+			
+			return userList;
+		}
+		
+		
+		@Override
+		
+		//public List<ModelInquiryList>getOrderList(int orderType,String initial_Buyer,String ultimateBuyerName,Long inqueryId,Long planId,Long designBy,Long designId,Long userId,Long userClusterId,Date inqStartDate, Date inqEndDate,Date designStartDate,Date designEndDate,Date planStartDate,Date planEndDate)
+		
+		public List<ModelInquiryList>getOrderList(String initial_Buyer,String ultimateBuyerName,Long inqueryId,Date inqStartDate, Date inqEndDate)
+
+		{
+			System.out.println("daoProductionPlan "+ " initial buyer :" + initial_Buyer+ " ultimate buyer name : " + ultimateBuyerName);
+			
+			//between coalesce(date_format('" + inqStartDate + "',\"%Y-%m-%d\")
+				/*
+				 * mlfm_order  a
+				 * mlfm_order_item b
+				 * mlfm_order_item_qty c
+				 *  mlfm_item d
+				 *  mlfm_uom e
+				 *  mlfm_order_owner f
+				 *  mlfm_design l
+				*/
+//			String  qry=" select * from (  select a.order_id, a.order_date,b.item_order_id,b.item_id,d.item_name,c.order_item_qty_id,c.item_qty,c.uom_id,e.uom_name,c.design_id,a.order_owner_id,f.owner_name from mlfm_order a inner join mlfm_order_item b on a.order_id=b.order_id inner join mlfm_order_item_qty c on b.item_order_id=c.order_item_id inner join mlfm_item d on b.item_id=d.item_id left outer join mlfm_uom e on c.uom_id=e.uom_id inner join mlfm_order_owner f on a.order_owner_id=f.order_owner_id  and a.active_status=1 and b.active_status=1 and c.active_status=1 and not exists (SELECT 1 FROM mlfm_production_plan_mst p where p.ORDER_ITEM_QTY_ID=c.order_item_qty_id) ) a" + 
+//					" where a.owner_name like concat('%',:initial_Buyer,'%') and a.owner_name like concat('%',:ultimateBuyerName,'%') and a.order_date between coalesce(:inqStartDate,a.order_date) and coalesce(:inqEndDate,a.order_date) ";
+			
+//			String  qry_inquiry=" select * from (  select a.order_id, a.order_date,b.item_order_id,b.item_id,d.item_name,c.order_item_qty_id,c.item_qty,c.uom_id,e.uom_name,c.design_id,"+
+//			" a.order_owner_id,f.owner_name from mlfm_order a inner join mlfm_order_item b on a.order_id=b.order_id " +
+//					" inner join mlfm_order_item_qty c on b.item_order_id=c.order_item_id inner join mlfm_item d on b.item_id=d.item_id " +
+//			" left outer join mlfm_uom e on c.uom_id=e.uom_id inner join mlfm_order_owner f on a.order_owner_id=f.order_owner_id  and a.active_status=1 and b.active_status=1 and c.active_status=1 and not exists (SELECT 1 FROM mlfm_production_plan_mst p where p.ORDER_ITEM_QTY_ID=c.order_item_qty_id) ) a" + 
+//					" where a.owner_name like concat('%',:initial_Buyer,'%') and" +
+//					 " a.owner_name like concat('%',:ultimateBuyerName,'%') and" +
+//					 " a.order_id= coalesce(:inqueryId,a.order_id) and" +
+//					" a.design_id= coalesce(:designId,a.order_id) and" + 
+//					" a.order_date between coalesce(:inqStartDate,a.order_date) and" + 
+//					 " coalesce(:inqEndDate,a.order_date) ";
+			
+			String  qry_inquiry=" select * from (  select a.order_id, a.order_date,b.item_order_id,b.item_id,d.item_name,c.order_item_qty_id,c.item_qty,c.uom_id,e.uom_name,c.design_id,"+
+					        " a.order_owner_id,f.owner_name from mlfm_order a inner join mlfm_order_item b on a.order_id=b.order_id " +
+							" inner join mlfm_order_item_qty c on b.item_order_id=c.order_item_id inner join mlfm_item d on b.item_id=d.item_id " +
+					        " left outer join mlfm_uom e on c.uom_id=e.uom_id inner join mlfm_order_owner f on a.order_owner_id=f.order_owner_id " +
+					        "and a.active_status=1 " +
+					        "and b.active_status=1 " +
+					        "and c.active_status=1 " +
+					        "and not exists (SELECT 1 FROM mlfm_production_plan_mst p where p.ORDER_ITEM_QTY_ID=c.order_item_qty_id) ) a" + 
+							" where a.owner_name like concat('%',:initial_Buyer,'%') and" +
+						    " a.owner_name like concat('%',:ultimateBuyerName,'%') and" +
+						    " a.order_id= coalesce(:inqueryId,a.order_id) and" +
+							" a.order_date between coalesce(:inqStartDate,a.order_date) and" + 
+						    " coalesce(:inqEndDate,a.order_date) ";
+			
+			
+			/* 
+			 * sql Query
+			 * 
+			 *       select * from (  select a.order_id, a.order_date,b.item_order_id,b.item_id,d.item_name,c.order_item_qty_id,c.item_qty,c.uom_id,e.uom_name,c.design_id,
+			         a.order_owner_id,f.owner_name from mlfm_order a inner join mlfm_order_item b on a.order_id=b.order_id 
+					 inner join mlfm_order_item_qty c on b.item_order_id=c.order_item_id inner join mlfm_item d on b.item_id=d.item_id 
+			         left outer join mlfm_uom e on c.uom_id=e.uom_id inner join mlfm_order_owner f on a.order_owner_id=f.order_owner_id 
+			         and a.active_status=1 
+			         and b.active_status=1
+			         and c.active_status=1 
+			         and not exists (SELECT 1 FROM mlfm_production_plan_mst p where p.ORDER_ITEM_QTY_ID=c.order_item_qty_id) ) a
+					 where a.owner_name like concat('%',@initial_Buyer,'%') and
+				     a.owner_name like concat('%',@ultimateBuyerName,'%') and
+				     a.order_id= coalesce(@inqueryId,a.order_id) and
+					 a.order_date between coalesce(@inqStartDate,a.order_date) and
+				     coalesce(@inqEndDate,a.order_date)
+			*/
+
+			
+			// this query is for considering wo data. This shall be implemented together with inquiry data after completing wo UI. (By: SAS, Date: Jan 9, 2018)
+		/*	
+			String  qry_wo="select * from (  select a.order_id, a.order_date,b.item_order_id,b.item_id,d.item_name,c.order_item_qty_id,c.item_qty,c.uom_id,e.uom_name,c.design_id,\r\n" + 
+					"a.order_owner_id,f.owner_name, wom.wo_mst_id wo_id,wom.wo_date,woc.item_qty wo_qty from mlfm_order a inner join mlfm_order_item b on a.order_id=b.order_id \r\n" + 
+					"inner join mlfm_order_item_qty c on b.item_order_id=c.order_item_id inner join mlfm_item d on b.item_id=d.item_id \r\n" + 
+					"left outer join mlfm_uom e on c.uom_id=e.uom_id inner join mlfm_order_owner f on a.order_owner_id=f.order_owner_id inner join mlfm_wo_mst wom \r\n" + 
+					"on wom.order_owner_id=f.order_owner_id inner join mlfm_wo_chd woc on woc.wo_mst_id=wom.wo_mst_id and woc.order_item_qty_id =c.order_item_qty_id \r\n" + 
+					") a " + 
+					" where a.owner_name like concat('%',:initial_Buyer,'%') and" +
+					" a.owner_name like concat('%',:ultimateBuyerName,'%') and" +
+					" a.order_id= coalesce(:inqueryId,a.order_id) and" +
+					" a.design_id= coalesce(:designId,a.order_id) and" + 
+					" a.order_date between coalesce(:inqStartDate,a.order_date) and" + 
+					 " coalesce(:inqEndDate,a.order_date) ";
+		*/	
+				RowMapper<ModelInquiryList> serviceMapper=new RowMapper<ModelInquiryList>() {
+					@Override
+					public ModelInquiryList mapRow(ResultSet rs, int rownum) throws SQLException{
+						ModelInquiryList bn=new ModelInquiryList();
+				
+					bn.setOrderId(rs.getLong("order_id"));
+					bn.setOrderDate(rs.getDate("order_date"));
+					bn.setOrderItemQuantityId(rs.getLong("order_item_qty_id"));
+					bn.setOrderOwnerName(rs.getString("owner_name"));
+					bn.setItemName(rs.getString("item_name"));
+					bn.setItemQty(rs.getDouble("item_qty"));
+					bn.setUomName(rs.getString("uom_name"));
+					
+					//bn.setOrderOwnerId(rs.getLong("order_owner_id"));
+					
+				 
+					return bn;
+					
+					}	
+				};
+				
+				
+				MapSqlParameterSource parameters = new MapSqlParameterSource();
+				
+				  parameters.addValue("initial_Buyer", initial_Buyer);
+				  parameters.addValue("ultimateBuyerName", ultimateBuyerName);
+				  parameters.addValue("inqueryId", inqueryId);
+			      parameters.addValue("inqStartDate", inqStartDate);
+                  parameters.addValue("inqEndDate", inqEndDate);
+			     
+			    System.out.println("query for when select Inquiry : " + qry_inquiry);
+				
+				return  namedJdbcTemplate.query(qry_inquiry,parameters,serviceMapper);
+
+		}
+		

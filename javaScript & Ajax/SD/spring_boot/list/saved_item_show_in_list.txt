@@ -1,0 +1,35 @@
+1. dao method
+
+@Override
+	public List<ModelCluster> getClusterName() {
+		// TODO Auto-generated method stub
+		return clusterRepository.getClusterName();
+	}
+
+
+2. repository
+
+@Query("select a from MLFM_CLUSTER a where a.activeStatus=1 order by a.clusterName" )
+	public List<ModelCluster> getClusterName();
+
+
+3. controller
+
+ List<ModelCluster> modelCluster = daoCluster.getClusterName();
+		 model.addAttribute("modelCluster",modelCluster);
+
+
+4. html
+
+	<div class="col-3">
+		<div class="form-group">
+		<label >Cluster Name<span class="req">*</span></label>
+		<select class="form-control" id="clusterId" name ="clusterId" th:field="*{modelCluster.clusterId}" placeholder="Cluster Name"  >
+		<option value="">Select Cluster</option>
+		<option	th:each="modelCluster:${modelCluster}"
+			th:value="${modelCluster.clusterId}"
+			th:utext="${modelCluster.clusterName}"/>
+			
+		</select>
+		</div>
+		</div>

@@ -1,0 +1,30 @@
+package com.biziitech.attm.daoImp;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.biziitech.attm.bg.model.ModelTestdb;
+import com.biziitech.attm.bg.repository.TestdbRepository;
+import com.biziitech.attm.dao.DaoTestdb;
+
+@Service
+public class DaoTestdbImp implements DaoTestdb {
+	
+	@Autowired
+	private TestdbRepository testdbRepository;
+	
+    @Override
+	public int save(ModelTestdb modelTestdb) {
+		try {
+    	testdbRepository.save(modelTestdb);
+    	return 1;
+	}
+		
+		catch(Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
+
+}
+    
+}

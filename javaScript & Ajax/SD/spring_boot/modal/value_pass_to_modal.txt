@@ -1,0 +1,51 @@
+value pass to modal
+===================
+
+
+<script>
+      
+      
+      $("#searchResultTable").on('click','.SearchResultItemBtn',function(){
+   	              	 
+    	    var tr = $(this).closest('tr');
+            
+            var inquiryId = tr.find(".inquiryId").text();
+              
+            document.getElementById("modalItemOrderId").value=inquiryId;
+            document.getElementById("smessageitem").innerHTML=null;
+            
+            
+			
+      });
+
+</script>
+
+
+<script type="text/javascript">
+
+ $("#purchaseListTable").on('click','.purchaseListTableEditBtn',function(){
+
+         alert("test");
+                     
+          $row = $(this).closest('tr');
+            
+            var purchaseListId =  $row.find(".purchaseListTableId").text();
+            var listName =  $row.find(".purchaseListTableListName").text();
+            var listDate =  $row.find(".purchaseListTableListDate").text();
+            var remarks =  $row.find(".purchaseListTableListRemarks").text();
+            var activeStatus =  $row.find(".purchaseListTableStatus").text();
+              
+            //document.getElementById("modalItemOrderId").value=inquiryId;
+            //document.getElementById("smessageitem").innerHTML=null;
+
+
+alert("purchase list id " + listName);
+            $('#modalPurchaseListId').val(purchaseListId);
+            $('#modalPurchaseListName').val(listName);
+            $('#modalPurchaseListDate').val(listDate);
+            $('#modalPurchaseListRemarks').val(remarks);
+            
+            /* checkbox value pass */
+      
+      });
+   </script>   

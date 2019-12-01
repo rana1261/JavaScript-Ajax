@@ -1,0 +1,11 @@
+var chatinput = document.getElementById("chatinput").value;
+if (chatinput == "" || chatinput.length == 0 || chatinput == null)
+{
+    // Invalid... Box is empty
+}
+Or shorthanded:
+
+if (!document.getElementById("chatinput").value)
+{
+    // Invalid... Box is empty
+}

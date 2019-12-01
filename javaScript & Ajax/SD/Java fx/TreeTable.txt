@@ -1,0 +1,244 @@
+1. For the columns of tree table we have to create a custom class for binding and it is a must. 
+ Here is a sample code which includes two mpdel class 'Person' and 'ObjectInfo' and our custom class 'UserObject' 
+
+
+public class TreeTableTemplate implements Initializable {
+
+	@FXML
+	private TreeTableView<UserObject> treeTable;
+	@FXML
+	private TreeTableColumn<UserObject, String> colDesignation;
+	@FXML
+	private TreeTableColumn<UserObject, String> colUserName;
+
+	@FXML
+	private TreeTableColumn<UserObject, String> colShortCode;
+
+	@FXML
+	private TreeTableColumn<UserObject, String> colObjectName;
+
+	private TableView<Object> subTable = new TableView<Object>();
+	private TableColumn colName = new TableColumn<>("Name");;
+
+	private TableColumn colDesig = new TableColumn<>("Designation");
+
+	ObservableList<ObjectInfo> objectData = FXCollections.observableArrayList(new ObjectInfo("LoginForm", "LF"),
+			new ObjectInfo("Admin", "Ad")
+
+	);
+
+	ObservableList<Person> userData = FXCollections.observableArrayList(new Person("Dhanmondi", "Setup"),
+			new Person("Motijheel", "Setup"), new Person("Mirpur", "Setup"));
+	
+	ObservableList <String> chk=  FXCollections.observableArrayList("a","b");
+
+/*	TreeItem<Object> user1 = new TreeItem<>(new Person("Aritra", "SD")); // static way of adding items
+	TreeItem<Object> user2 = new TreeItem<>(new Person("Tanvir", "WDD"));
+	TreeItem<Object> user3 = new TreeItem<>(new Person("Rezwan", "GD"));
+	TreeItem<Object> user4 = new TreeItem<>(subTable);*/
+
+	TreeItem<UserObject> root = new TreeItem<>(new UserObject());
+
+	@Override
+	public void initialize(URL arg0, ResourceBundle arg1) {
+		// TODO Auto-generated method stub
+
+		// user3.getChildren().add(user4);
+
+		colUserName.setCellValueFactory((cellData) -> ( cellData.getValue().getValue()).userNameProperty());
+		colDesignation.setCellValueFactory((celldata) -> (celldata.getValue().getValue()).designationProperty());
+		colObjectName.setCellValueFactory((celldata) -> (celldata.getValue().getValue()).objectNameProperty());
+		colShortCode.setCellValueFactory((celldata) -> (celldata.getValue().getValue()).shortCodeProperty());
+				
+
+		// colName.setCellValueFactory(new PropertyValueFactory<Person,
+		// String>("String"));
+		// colDesig.setCellValueFactory(new PropertyValueFactory<Person,
+		// String>("String"));
+
+		/// subTable.setItems(data);
+		// subTable.getColumns().addAll(colName, colDesig);
+		// root.getChildren().setAll(user1, user2, user3);
+		for (Person person : userData) { // dynamic way of adding items
+			TreeItem<UserObject> userTreeItem = new TreeItem<>(new UserObject( person));
+			
+			for (ObjectInfo obj : objectData) {
+				TreeItem<UserObject> objectTreeItem = new TreeItem<>(new UserObject(obj));
+				
+				userTreeItem.getChildren().add(objectTreeItem);
+			}
+			
+			root.getChildren().add(userTreeItem);
+		}
+		treeTable.setRoot(root);
+		treeTable.setShowRoot(false);
+
+	}
+
+	class Person { // model class
+		private StringProperty name = new SimpleStringProperty();
+		private StringProperty designation = new SimpleStringProperty();
+
+		public Person() {
+
+		}
+
+		public Person(String name, String designation) {
+
+			this.name = new SimpleStringProperty(name);
+			this.designation = new SimpleStringProperty(designation);
+		}
+
+		public final StringProperty nameProperty() {
+			return this.name;
+		}
+
+		public final String getName() {
+			return this.nameProperty().get();
+		}
+
+		public final void setName(final String name) {
+			this.nameProperty().set(name);
+		}
+
+		public final StringProperty designationProperty() {
+			return this.designation;
+		}
+
+		public final String getDesignation() {
+			return this.designationProperty().get();
+		}
+
+		public final void setDesignation(final String designation) {
+			this.designationProperty().set(designation);
+		}
+
+		@Override
+		public String toString() {
+			return "person [name=" + name + ", designation=" + designation + "]";
+		}
+
+	}
+
+	class ObjectInfo { // model class
+		private StringProperty objectName = new SimpleStringProperty();
+		private StringProperty shortCode = new SimpleStringProperty();
+
+		public ObjectInfo(String objectName, String shortCode) {
+
+			this.objectName = new SimpleStringProperty(objectName);
+			this.shortCode = new SimpleStringProperty(shortCode);
+		}
+
+		public ObjectInfo() {
+
+		}
+
+		public final StringProperty objectNameProperty() {
+			return this.objectName;
+		}
+
+		public final String getObjectName() {
+			return this.objectNameProperty().get();
+		}
+
+		public final void setObjectName(final String objectName) {
+			this.objectNameProperty().set(objectName);
+		}
+
+		public final StringProperty shortCodeProperty() {
+			return this.shortCode;
+		}
+
+		public final String getShortCode() {
+			return this.shortCodeProperty().get();
+		}
+
+		public final void setShortCode(final String shortCode) {
+			this.shortCodeProperty().set(shortCode);
+		}
+
+		@Override
+		public String toString() {
+			return "ObjectInfo [objectName=" + objectName + ", shortCode=" + shortCode + "]";
+		}
+
+	}
+	
+
+	class UserObject { // custom class
+		private final StringProperty userName = new SimpleStringProperty(this, "name", "");
+		private final StringProperty designation = new SimpleStringProperty(this, "designation", "");
+		private final StringProperty objectName = new SimpleStringProperty(this, "objectName", "");
+		private final StringProperty shortCode = new SimpleStringProperty(this, "shortCode", "");
+
+		public final StringProperty userNameProperty() {
+			return this.userName;
+		}
+
+		public final String getUserName() {
+			return this.userNameProperty().get();
+		}
+
+		public final void setUserName(final String userName) {
+			this.userNameProperty().set(userName);
+		}
+
+		public final StringProperty designationProperty() {
+			return this.designation;
+		}
+
+		public final String getDesignation() {
+			return this.designationProperty().get();
+		}
+
+		public final void setDesignation(final String designation) {
+			this.designationProperty().set(designation);
+		}
+
+		public final StringProperty objectNameProperty() {
+			return this.objectName;
+		}
+
+		public final String getObjectName() {
+			return this.objectNameProperty().get();
+		}
+
+		public final void setObjectName(final String objectName) {
+			this.objectNameProperty().set(objectName);
+		}
+
+		public final StringProperty shortCodeProperty() {
+			return this.shortCode;
+		}
+
+		public final String getShortCode() {
+			return this.shortCodeProperty().get();
+		}
+
+		public final void setShortCode(final String shortCode) {
+			this.shortCodeProperty().set(shortCode);
+		}
+
+		public UserObject() {
+
+		}
+		
+		public UserObject(Person person) {
+			userName.bindBidirectional(person.nameProperty());
+			designation.bindBidirectional(person.designationProperty());
+		}
+
+		public UserObject(ObjectInfo object) {
+		
+			objectName.bindBidirectional(object.objectNameProperty());
+			shortCode.bindBidirectional(object.shortCodeProperty());
+
+		}
+
+		
+
+	}
+
+}
+

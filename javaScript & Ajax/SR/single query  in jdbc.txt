@@ -1,0 +1,7 @@
+===================================================================Single jdbc query with search result===============================================================
+
+ Object[] inputs = new Object[] {bn.getwOChdId()};
+		        pIQtySaved = jdbcTemplate.queryForObject(qry_sum_pi_qty, inputs, Double.class);
+		        bn.setpIQtySaved(pIQtySaved);
+		        System.out.println(" double sum already saved pi qty " + pIQtySaved);
+

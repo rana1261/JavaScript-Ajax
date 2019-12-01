@@ -1,0 +1,5 @@
+if ($('#modalPRChdTable td:contains('+itemId +')').length) {
+    alert("This items has already been selected. Please choose another one");
+}
+      
+    else {

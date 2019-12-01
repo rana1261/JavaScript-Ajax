@@ -1,0 +1,536 @@
+Any data populate (search) notes
+====================
+
+1. create dao method
+
+public List<ModelPurchaseListItemCustom> getPopulatePurchaseListItemData();
+
+
+2. implement dao method.
+
+data can be obtained by hibernate jpa query/jdbc query
+
+
+2.1. jdbc query
+===========
+
+2.1.1. using jdbcTemplate
+===================
+/****** declaration ********/
+
+@Autowired
+    private DataSource dataSource;
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+	
+        public void setDataSource(DataSource dataSource) {
+            this.dataSource = dataSource;
+            this.jdbcTemplate = new JdbcTemplate(dataSource);
+          }
+        
+
+@Autowired
+    	private NamedParameterJdbcTemplate namedJdbcTemplate;
+        public void setNamedDataSource(DataSource dataSource) {
+            this.dataSource = dataSource;
+            this.namedJdbcTemplate=namedJdbcTemplate;
+              }
+
+/********** dao method ********/
+@Override
+	public List<ModelPurchaseListItemCustom> getPopulatePurchaseListItemData() {
+		// query need to be reexaminied with care. include active status properly
+		String qry="	 select d.item_id, d.item_name, sum(a.po_qty) total_po_qty from sm_pochd a inner join sm_pomst b on b.pomst_id=a.pomst_id\r\n" + 
+				"		 inner join sm_prchd c on c.prchd_id=a.prchd_id inner join sm_item d on d.item_id=c.item_id\r\n" + 
+				"		 where\r\n" + 
+				"		 and exists (select 1 from sm_purchaselistitem e,sm_purchaselistpo f where e.purchaselistitem_id=f.purchaselistitem_id and f.pochd_id=a.pochd_id and e.active_status=1)\r\n" + 
+				"		 group by d.item_id, d.item_name";
+		
+				
+		RowMapper<ModelPurchaseListItemCustom> purchaseListMstMapper=new RowMapper<ModelPurchaseListItemCustom>() {
+			@Override
+			public ModelPurchaseListItemCustom mapRow(ResultSet rs, int rownum) throws SQLException{
+				ModelPurchaseListItemCustom bn=new ModelPurchaseListItemCustom();
+		
+				bn.setItemId(rs.getLong("item_id"));
+				bn.setItemName(rs.getString("item_name"));
+				bn.setTotalPOQty(rs.getDouble("total_po_qty"));
+			
+				 
+			return bn;
+			
+			}	
+		};
+		
+		return jdbcTemplate.query(qry,purchaseListMstMapper);
+		
+	}
+
+}
+
+
+
+2.1.2. using NamedParameterJdbcTemplate
+==================================
+
+@Override
+	
+   public List<ModelPRMstCustom> getPRMstSearchData(Long clientId,int activeStatus,Long pRMstId ) {	
+		String qry="select distinct a.prmst_id, a.prmst_date, e.client_name, a.remarks, a.active_status from SM_PRMST a " +
+		" inner join SM_CLIENT e ON a.CLIENT_ID=e.CLIENT_ID " +
+		
+
+		
+" where  e.client_id= coalesce(:clientId,e.client_id) "  +
+" and a.prmst_id=coalesce(:pRMstId,a.prmst_id)" + 
+" and not exists (select 1 from SM_PRCHD b where b.prmst_id=a.prmst_id)" + 
+" and a.active_status=coalesce(:activeStatus,a.active_status)" +
+" order by a.prmst_date desc";
+
+		RowMapper<ModelPRMstCustom> pRMstMapper=new RowMapper<ModelPRMstCustom>() {
+			@Override
+			public ModelPRMstCustom mapRow(ResultSet rs, int rownum) throws SQLException{
+				ModelPRMstCustom bn=new ModelPRMstCustom();
+		
+				bn.setpRMstId(rs.getLong("prmst_id"));
+				bn.setpRMstDate(rs.getDate("prmst_date"));
+				bn.setClientName(rs.getString("client_name"));
+			    bn.setRemarks(rs.getString("remarks"));
+			    bn.setActiveStatus(rs.getInt("active_status"));
+			
+				
+		
+			
+			
+			
+		 
+			return bn;
+			
+			}	
+		};
+		
+		
+		MapSqlParameterSource parameters = new MapSqlParameterSource();
+		
+		 // parameters.addValue("itemTypeId", itemTypeId);
+		  //parameters.addValue("itemName", itemName);
+		  parameters.addValue("pRMstId", pRMstId);
+		  parameters.addValue("clientId", clientId);
+	      //parameters.addValue("fromDate", fromDate);
+         // parameters.addValue("toDate", toDate);
+          parameters.addValue("activeStatus", activeStatus);
+	     
+	    System.out.println("query for when select Inquiry : " + qry);
+		
+		return  namedJdbcTemplate.query(qry,parameters,pRMstMapper);
+		
+		
+	}
+
+
+2.2. jpa 
+=========
+
+
+repository method
+=================
+
+public interface POChdRepository extends JpaRepository<ModelPOChd, Long>  {
+
+	@Query("select a from SM_POCHD a where a.pOChdId=:id")
+	public List<ModelPOChd> findPOChdById(@Param("id")Long id);
+	
+	@Query("select a from SM_POCHD a where a.modelPOMst.pOMstId=:pOMstId")
+	public List<ModelPOChd> findPOChdByPOMstId(@Param("pOMstId")Long pOMstId);
+}
+
+
+
+3. controller method
+====================
+
+3.1. return view
+
+@RequestMapping(path="/object/modulesearch", method=RequestMethod.GET)
+	    public String getModuleFromSystem(Model model) {
+			
+			
+			
+			
+			  System.out.println("system user :" + systemUserId);
+			  Long userId=systemUserId;
+			  
+			   ModelUser logonUser=daoLogonImp.getLogonUserName(userId);
+				 String userName=logonUser.getUserName();
+				 System.out.println("logon user name is :" + userName);
+				 String name=userName;
+				 model.addAttribute("name",name );
+				 model.addAttribute("userId",userId);
+			  // left panel list
+			 
+				        //  for setup
+					    List<ModelUserObject> listModelUserObjectSetup= new ArrayList<ModelUserObject>();
+						listModelUserObjectSetup=daoUserObject.getUserObjectByObjectGroup(userId,"S");
+						System.out.println("listModelUserObjectSetup : " + listModelUserObjectSetup);
+						System.out.println("size " + listModelUserObjectSetup.size() );
+						model.addAttribute("listModelUserObjectSetup", listModelUserObjectSetup);
+						
+						//for Transactions
+						List<ModelUserObject> listModelUserObjectTransaction= new ArrayList<ModelUserObject>();
+						listModelUserObjectTransaction=daoUserObject.getUserObjectByObjectGroup(userId,"T");
+						System.out.println("listModelUserObjectTransaction : " + listModelUserObjectTransaction);
+						System.out.println("size " + listModelUserObjectTransaction.size() );
+						model.addAttribute("listModelUserObjectTransaction", listModelUserObjectTransaction);
+						
+				        //for Tools
+						List<ModelUserObject> listModelUserObjectTool= new ArrayList<ModelUserObject>();
+						listModelUserObjectTool=daoUserObject.getUserObjectByObjectGroup(userId,"U");
+						System.out.println("listModelUserObjectTool : " + listModelUserObjectTool);
+						System.out.println("listModelUserObjectTool size " + listModelUserObjectTool.size() );
+						model.addAttribute("listModelUserObjectTool", listModelUserObjectTool);
+						
+						//for reports
+						List<ModelUserObject> listModelUserObjectReport= new ArrayList<ModelUserObject>();
+						listModelUserObjectReport=daoUserObject.getUserObjectByObjectGroup(userId,"R");
+						System.out.println("listModelUserObjectReport : " + listModelUserObjectReport);
+						System.out.println("listModelUserObjectReport size " + listModelUserObjectReport.size());
+						model.addAttribute("listModelUserObjectReport", listModelUserObjectReport);
+					//left panel list
+			
+			
+			
+			model.addAttribute("systemList",daoSystemImp.getSystemList());
+	    	model.addAttribute("moduleList",daoModuleImp.getModuleList());
+	    	
+	    	
+	    	ModelSystem newsystem=new ModelSystem();
+			model.addAttribute("newsystem", newsystem);
+			
+			
+			ModelModule newmodule=new ModelModule();	
+			newmodule.setActive(true);
+		    model.addAttribute("newmodule", newmodule);
+		    
+		    ModelObject newobject=new ModelObject();	
+		    newobject.setActive(true);
+		    model.addAttribute("newobject", newobject);
+		    
+		    model.addAttribute("objectGroupList",daoObjectGroupImp.getObjectGroupList());
+		    model.addAttribute("objectTypeList",daoObjectTypeImp.getObjectTypeList());
+	    	
+	    	return "object";
+	    	
+	    }
+
+
+
+
+3.2. Rest API - return data
+
+@RequestMapping(path="/purchaselistcontroller/populatePurchaseListItem",method=RequestMethod.POST)
+	@ResponseBody
+
+	public List<ModelPurchaseListItemCustom> populatePurchaseListItem(Model model
+	         // @RequestParam("activeStatus") int activeStatus
+	          ) {
+		
+		List<ModelPurchaseListItemCustom> modelPurchaseListItemCustomArray= new ArrayList<ModelPurchaseListItemCustom>();
+		
+		modelPurchaseListItemCustomArray=daoPurchaseList.getPopulatePurchaseListItemData();
+		
+		System.out.println("search data size " + modelPurchaseListItemCustomArray.size());
+		
+		return modelPurchaseListItemCustomArray;
+	     }
+	
+	
+
+
+
+
+4. html page
+==============
+
+4.1. show controller data in html page using thymeleaf
+
+  <div class="row">
+                  <form class="needs-validation" th:action="@{/item/type/search}"   novalidate>
+                        <div class="col-3">
+                            <div class="form-group">
+                                <label class="control-label mb-1">Item Type Name</label>
+                                <input  type="text" class="form-control" aria-required="true" aria-invalid="false" value="" name ="item_name" placeholder="Name" >
+                            </div>
+                        </div>
+                   
+                      <div class="col-2">
+                            <div class="form-group">
+                                <label class="control-label mb-1">Level</label>
+                                <input  id="cc-pament" type="text" class="form-control" aria-required="true" aria-invalid="false" value="" name="level" placeholder="Level" >
+                            </div>
+                        </div>
+						
+							<div class="col-2">
+								<div class="form-group">
+									<label class="control-label mb-1">Remarks</label>
+										<input type="text" class="form-control" aria-required="true"  placeholder="remarks" name="remarks" aria-invalid="false">
+								</div>
+							</div>
+							
+             
+                       	
+							
+                     			<div class="col-1">
+									<div class="form-group">
+										<label class="control-label mb-1">Active</label>
+														<!-- Default checked -->
+										<div class="custom-control custom-checkbox">
+											 <input type="checkbox" class="custom-control-input" id="defaultChecked2" name ="active" checked>
+											<label class="custom-control-label" for="defaultChecked2"></label>
+										</div>
+														<!--<input type="checkbox" class="form-control" aria-required="true" aria-invalid="false" th:field="*{active}"-->
+									</div>
+								</div>
+								
+                        <div class="col-2">
+                            <div class="form-group">
+                                <label for="" class="control-label mb-1"></label>
+                                <input style="margin-top: 7px" id="" type="submit" value="Search" class="form-control btn-primary btn-sm" aria-required="true" aria-invalid="false" name="" placeholder="Name" >
+                            </div>
+
+                        </div>
+                        
+                           <div class="col-2">
+									    <div class="form-group">
+											
+											
+											<a  class="btn btn-success" id="clientListReport"  style="margin-top: 28px;">Report Generate</a>
+										    <a th:href="@{'/reportcontroller/downloadreport/ClientListRpt'}" class="btn btn-primary" id="reportView"  target="_blank" style="margin-left: 20px;">Report View</a>
+										
+										</div>
+									</div>
+									
+					
+									<div id="targetDiv">
+									</div>
+                    </form>
+                </div>
+
+
+
+called method of controller
+===========================
+
+@RequestMapping(path="/item/type/search")
+	public String findItemType(Model model,@RequestParam("item_name")String itemName,@RequestParam("level")Integer level,@RequestParam("remarks")String remarks,
+								@RequestParam(value="active", required= false)String active) {
+		
+		
+		
+		
+		    System.out.println("system user :" + systemUserId);
+		    Long userId=systemUserId;
+		    
+		     ModelUser logonUser=daoLogonImp.getLogonUserName(userId);
+			 String userName=logonUser.getUserName();
+			 System.out.println("logon user name is :" + userName);
+			 String name=userName;
+			 model.addAttribute("name",name );
+			 model.addAttribute("userId",userId);
+		    // left panel list
+		   
+			        //  for setup
+				    List<ModelUserObject> listModelUserObjectSetup= new ArrayList<ModelUserObject>();
+					listModelUserObjectSetup=daoUserObject.getUserObjectByObjectGroup(userId,"S");
+					System.out.println("listModelUserObjectSetup : " + listModelUserObjectSetup);
+					System.out.println("size " + listModelUserObjectSetup.size() );
+					model.addAttribute("listModelUserObjectSetup", listModelUserObjectSetup);
+					
+					//for Transactions
+					List<ModelUserObject> listModelUserObjectTransaction= new ArrayList<ModelUserObject>();
+					listModelUserObjectTransaction=daoUserObject.getUserObjectByObjectGroup(userId,"T");
+					System.out.println("listModelUserObjectTransaction : " + listModelUserObjectTransaction);
+					System.out.println("size " + listModelUserObjectTransaction.size() );
+					model.addAttribute("listModelUserObjectTransaction", listModelUserObjectTransaction);
+					
+			        //for Tools
+					List<ModelUserObject> listModelUserObjectTool= new ArrayList<ModelUserObject>();
+					listModelUserObjectTool=daoUserObject.getUserObjectByObjectGroup(userId,"U");
+					System.out.println("listModelUserObjectTool : " + listModelUserObjectTool);
+					System.out.println("listModelUserObjectTool size " + listModelUserObjectTool.size() );
+					model.addAttribute("listModelUserObjectTool", listModelUserObjectTool);
+					
+					//for reports
+					List<ModelUserObject> listModelUserObjectReport= new ArrayList<ModelUserObject>();
+					listModelUserObjectReport=daoUserObject.getUserObjectByObjectGroup(userId,"R");
+					System.out.println("listModelUserObjectReport : " + listModelUserObjectReport);
+					System.out.println("listModelUserObjectReport size " + listModelUserObjectReport.size());
+					model.addAttribute("listModelUserObjectReport", listModelUserObjectReport);
+				//left panel list
+		
+		
+		
+		
+		
+		
+		
+		int status=1;
+		if(active == null)
+			status =0;
+	//	System.out.println( itemRepository.findItemDetails());
+		
+					
+	//	model.addAttribute("typeList",itemRepository.findItemDetails());
+		model.addAttribute("typeList",itemRepository.findItemTypeDetails(itemName,level,remarks,status));
+		//,level,remarks,status
+		
+		
+		return "item_type_list";
+	}
+
+4.2. Rest Api data with ajax
+
+<script type="text/javascript">
+  
+$("#searchBtn").click(function(e) {
+
+e.preventDefault();
+var rowIndexNumber=0; 
+
+var fromDate = $("#fromDate").val();
+var toDate = $("#toDate").val();
+
+/*
+var active = $("#searchActive").val();
+
+
+var activeStatus;
+if (active.checked==true) {
+activeStatus='1';
+}
+else {
+activeStatus='0';
+}
+*/
+
+//alert("new");
+
+var formData= { 
+                       
+                       // "itemTypeId" : itemTypeId,
+                        //"itemName" : itemName,
+                        "fromDate" : fromDate,
+                        "toDate" : toDate
+                        //"remarks" : remarks,
+                        //"fromDate" : fromDate,
+                        //"toDate" : toDate,
+                       // "activeStatus" : activeStatus
+                        
+              };
+                               
+                               $('#purchaseListTable tbody').empty(); 
+
+//alert("from date " + fromDate);
+//alert("to date " + toDate);
+
+                       $.ajax({
+
+
+                      type : "POST",
+                                                                url : "/purchaselistcontroller/purchaseListSearch",
+                                                                dataType : 'json',
+                                                                data : formData,
+                                                                  
+                                                                success: function(result){
+                                                                    //alert("3");
+                                                                  
+                                                           /* document.getElementById("chdTableMassage").hidden=true;
+                                                                  
+                                                                   var text="Data saved succesfully,press close button";
+                document.getElementById("productionPlanSaveMessage").innerHTML=text;  */
+                                                                  
+                                                                $.each(result, function(i,purchaseList){
+                                                              
+      //alert("4");
+               
+                /*  '<td class="prmstActiveStatus">' +PRMstList.activeStatus+'</td>' + */
+/*
+alert(" purchase list id " +  purchaseList.purchaseListId);
+alert(" purchase list name " +  purchaseList.listName);
+alert(" purchase list  date " +  purchaseList.listDate);
+alert(" purchase list remarks" +  purchaseList.remarks);
+alert(" purchase list status " +  purchaseList.activeStatus);
+       */                                      
+              
+                var customRow=
+'<tr>' +
+'<td class="purchaseListTableId" hidden>' + purchaseList.purchaseListId+ '</td>' +
+'<td class="purchaseListTableListName">' + purchaseList.listName+ '</td>' +
+'<td class="purchaseListTableListDate">' + purchaseList.listDate+ '</td>' +
+'<td class="purchaseListTableRemarks">' + purchaseList.remarks+ '</td>' +
+'<td class="purchaseListTableStatus" id="purchaseListTableStatus'  + rowIndexNumber + '">' + '</td>' +
+'<td class="purchaseListTableEditBtn">' + '<input type="button" value="Edit" class="btn btn-primary btn-md"  data-toggle="modal" data-target="#modalPurchaseList">'+ '</td>' +
+'<td class="purchaseListTablePopulateDataBtn">' + '<input type="button" value="Populate Item Data" class="btn btn-primary btn-md">'+ '</td>' +
+'</tr>';
+
+                
+                //alert("5");
+               
+                  
+                //alert("custom row " + customRow);
+            
+                $('#purchaseListTable tbody').append(customRow);
+
+                //alert("active status " + pRMstCustom.activeStatus);
+
+
+
+/*****************************************************************************************************
+
+showing database checkbox value
+
+***************************************************************************************************/
+
+                var statusId='#purchaseListTableStatus'+ rowIndexNumber; 
+
+
+
+                   if ( purchaseList.activeStatus==1) {
+
+                   
+                       
+                  
+                   $(statusId).html('<input type="checkbox" checked />') ;
+                
+
+                   }
+
+                   else {
+                    $(statusId).html( '<input type="checkbox" />' );
+                
+
+                  }            
+
+                  rowIndexNumber=rowIndexNumber+1;
+
+                                                               
+                                                                                  
+                                  });        // each
+
+                                                        
+           
+                           }   // end success
+                                          
+                                    /*      error : function(e) {
+                                                            alert("ERROR: ", e);
+                                                            console.log("ERROR: ", e);
+                                                          }
+                                       */
+                         });   // end ajax
+                                        
+
+
+});
+
+</script>
+
+

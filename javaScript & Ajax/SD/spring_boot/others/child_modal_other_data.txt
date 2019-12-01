@@ -1,0 +1,9 @@
+child modal
+============
+
+when one model reference another modal then only joining
+column is get when parent model is queried.
+
+To get child modal's other columns,
+child modal is set with joining column and then
+child modal is referenced at parent modal.

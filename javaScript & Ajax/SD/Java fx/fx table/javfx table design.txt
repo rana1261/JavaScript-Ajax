@@ -1,0 +1,24 @@
+1. to make table responsive
+
+-open fxml file with scenebuilder
+-select desired tableview
+-select properties in the right side
+-make column resize as "constrained resize".
+
+!!!Done!!!
+
+2. To make a single column fixed (width)
+
+-open fxml file with scenebuilder
+-select desired tableview
+-select properties in the right side
+-make column resize as "unconstrained resize".
+-select desired column
+-select layout in the right side
+-set all field (min, pref, max) with a same value
+-uncheck resize
+
+3. Populate Detail table in respect Master table
+
+- To populate data in the detail table you have to add listener in the Master Table Row.
+-for demo code see MsDetailControllerTemplate.java in the BGeneral .

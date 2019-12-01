@@ -1,0 +1,125 @@
+  
+
+===============================================================================Find cell value========================================================================
+
+if you want to find cell value from a table with rfer checkbox , use this code
+
+$('#wochdTable tr').filter(':has(:checkbox:checked)').find('td').each(function() { 
+
+ var wochdId = $(this).find("td:eq(1)").html();
+
+});
+
+
+================================================================================You can also used=====================================================================
+
+$('#wochdTable tr').filter(':has(:checkbox:checked)').each(function() { 
+		    var wochdId = $(this).find("td:eq(1)").html();
+});
+
+
+1. click funtion for the button
+
+  <script>
+      
+ $("#pimstTable").on('click','.chdpopulate',function(){
+	   
+	
+	    
+	     var $row = $(this).closest("tr");    // Find the row
+	     var id = $row.find(".pIMstId").text(); // Find the text
+	    
+	    
+	     
+	   
+		   
+	      $('#wochdTable tr').filter(':has(:checkbox:checked)').each(function() { 
+		    var wochdId = $(this).find("td:eq(1)").html();
+		 
+	    	//var ids= document.getElementById("wochdid").value = wochdId;
+	    	//var chdId = document.getElementById("wochdid").value;
+	    	
+	    	  
+	    	 var formData= { 
+	    			      "chdId" :chdId
+	    		       
+	    		        
+	    		        };
+	    		        
+	    		       
+	    		      
+	    		        $('#pichdTable tbody').empty();
+	    		       
+	    		           
+	    		            $.ajax({
+	    		            type : "GET",
+	    		         
+	    		           url:"/pichd/search",
+	    		            dataType : 'json',
+	    			    data: formData,
+	    		            success: function(result){
+	    			     $.each(result, function(i,pichd){
+	    							
+	    			    var customerRow = '<tr>' +
+	    			    '<td>' + + '</td>' +
+	    			    '<td>' + id + '</td>' +
+	    			    '<td>' + pichd.modelWOMst.woMstId + '</td>' +
+	    			    '<td>' + pichd.woChdId + '</td>' +
+						'<td>' + pichd.modelOrderItemQty.orderItemQtyId + '</td>' +
+						'<td>' + pichd.modelOrderItemQty.modelOrderItem.modelOrder.orderId + '</td>' +						
+						'<td>' + pichd.modelOrderItemQty.modelOrderItem.listModelItem.itemName + '</td>' +						
+			    		'<td class="qty">' + pichd.itemQty + '</td>' +
+			    		'<td>' + pichd.modelOrderItemQty.modelOrderItem.listModelItem.modelUOM.uomName + '</td>' +
+			    		'<td>' + pichd.itemRate + '</td>' +
+			    		'<td>' +  + '</td>' +
+			    							         
+	    										        
+	    									'</tr>';
+	    											  
+	    											  
+	    								
+	    			      $('#pichdTable tbody').append(customerRow);
+	    							
+	    				});        // each
+	    							 
+	    				},   // end success
+	    			error : function(e) {
+	    				alert("ERROR: ", e);
+	    				console.log("ERROR: ", e);
+	    					}
+	    							
+	    							
+	    		        });   // end ajax
+	    		        
+	    		        //total sum===
+	    		        	
+	    		            $("#pichdTable tr").each(function(){
+	    		  		      //alert($(this).text())	    		  		      
+	    		  		      alert("Find the table");
+	    		  		     
+	    		  		     
+	    		  		    });
+	    		        	
+	    		        	  	  
+            
+	     });
+	     
+	     
+	//total function end here   
+	
+	//table collumn sum========================
+		
+		
+		
+	});
+  
+   </script>
+
+
+
+
+
+
+
+
+2.

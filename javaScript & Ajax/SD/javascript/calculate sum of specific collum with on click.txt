@@ -1,0 +1,45 @@
+ <!-- =====================================Calculate function================================================ -->
+   
+   <script type="text/javascript">
+   
+ //  $('#calculate').on('click',function() {
+       
+	//	  alert("calculating");
+		  
+		
+	     //  $('#pichdTable tr').filter(':has(:checkbox:checked)').each(function() {
+	         //   var qty = $(this).find('.editqty').text();
+	           // var rate = $(this).find('.itemrate').text();
+	            
+	          //  var dateTotal = (qty * rate);
+	            
+	            //alert(dateTotal);
+	         
+	          //  $(this).find('.pichdtotalsum').text(dateTotal);
+	            
+	            
+	          //sum of collumn
+		        
+		      //  $(document).ready(function(){
+		     //			 var result = [];
+				 			 //$("#pichdTable tr").each(function(){
+				 // 	$('.pichdtotalsum', this).each(function(index, val){
+				    	//if(!result[index]) result[index] = 0;
+				    //  result[index] += parseInt($(val).text());
+				   // });
+				//  });
+				 // 
+				  //document.getElementById("pichdtotal").value=result;
+				  
+				  
+				//});
+	            
+	        //}); //END .each
+		  
+		 
+	   // });   
+   
+   </script>
+   
+   <!-- ============================================End======================================================== -->
+   

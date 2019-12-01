@@ -1,0 +1,50 @@
+<script type="text/javascript">
+
+$("#prmstTable").on('click','.pRChdBtn',function(){
+//$('#modalEditPRMstBtn').click(function() {
+	//e.preventDefault();
+
+alert("test");
+
+//$('#modalPRMstId').val('');
+//$('#modalPRMstDate').val(new java.util.date());
+/* $('#modalPRMstClientId').val()  */
+//$('#modalPRMstRemarks').text('NULL');
+//$('#modalPRMstActive').checked();
+
+$row=$(this).closest("tr");
+var prmstId=$row.find('.prmstId').text();
+
+$('#modalPRMstId').val($row.find('.prmstId').text());
+$('#modalPRMstDate').val($row.find('.prmstDate').text());
+
+$('#modalPRMstRemarks').val($row.find('.prmstRemarks').text());
+
+
+var formData= {
+
+"prmstId" : prmstId
+
+};
+
+$.ajax( {
+type:'POST',
+url:'/prcontroller/clientId',
+data:formData,
+success: function(result) {
+alert("result" + result);
+//$.each( result, function(i, clientType) {
+
+
+//});
+$('#modalPRMstClientId option[value=' + result + ']').attr('selected','selected');
+
+}
+
+
+
+});
+
+});
+
+</script>

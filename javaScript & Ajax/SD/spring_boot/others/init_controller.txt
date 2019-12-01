@@ -1,0 +1,116 @@
+
+	
+	@Autowired
+	private DaoUserImp daoUserImp;
+		
+	@Autowired
+	private DaoUserObject daoUserObject;
+	
+	@Autowired
+	private DaoLogonImp daoLogonImp;
+
+
+
+
+
+
+
+
+@RequestMapping(path="/production/plan/{userId}")
+	public String init(@PathVariable Long userId,Model model) {
+		try {
+			
+			
+			
+			System.out.println("user ID :" +userId);
+			 ModelUser modelUser=new ModelUser();
+			 modelUser.setUserId(userId);
+			 this.systemUserId=userId;
+			 ModelUser logonUser=daoLogonImp.getLogonUserName(userId);
+			 String userName=logonUser.getUserName();
+			 System.out.println("logon user name is :" + userName);
+			 String name=userName;
+			 model.addAttribute("name",name );	  
+				
+			 // left panel list
+			        //  for setup
+					List<ModelUserObject> listModelUserObjectSetup= new ArrayList<ModelUserObject>();
+					listModelUserObjectSetup=daoUserObject.getUserObjectByObjectGroup(userId,"S");
+					System.out.println("listModelUserObjectSetup : " + listModelUserObjectSetup);
+					System.out.println("size " + listModelUserObjectSetup.size() );
+					model.addAttribute("listModelUserObjectSetup", listModelUserObjectSetup);
+					
+					//for Transactions
+					List<ModelUserObject> listModelUserObjectTransaction= new ArrayList<ModelUserObject>();
+					listModelUserObjectTransaction=daoUserObject.getUserObjectByObjectGroup(userId,"T");
+					System.out.println("listModelUserObjectTransaction : " + listModelUserObjectTransaction);
+					System.out.println("size " + listModelUserObjectTransaction.size() );
+					model.addAttribute("listModelUserObjectTransaction", listModelUserObjectTransaction);
+					
+			        //for Tools
+					List<ModelUserObject> listModelUserObjectTool= new ArrayList<ModelUserObject>();
+					listModelUserObjectTool=daoUserObject.getUserObjectByObjectGroup(userId,"U");
+					System.out.println("listModelUserObjectTool : " + listModelUserObjectTool);
+					System.out.println("listModelUserObjectTool size " + listModelUserObjectTool.size() );
+					model.addAttribute("listModelUserObjectTool", listModelUserObjectTool);
+					
+				    //for reports
+					List<ModelUserObject> listModelUserObjectReport= new ArrayList<ModelUserObject>();
+					listModelUserObjectReport=daoUserObject.getUserObjectByObjectGroup(userId,"R");
+					System.out.println("listModelUserObjectReport : " + listModelUserObjectReport);
+					System.out.println("listModelUserObjectReport size " + listModelUserObjectReport.size());
+					model.addAttribute("listModelUserObjectReport", listModelUserObjectReport);
+				    
+					//left panel list
+			
+			
+			
+			
+			
+			
+		
+			ModelProductionPlanMst modelProductionPlanMst= new ModelProductionPlanMst();
+			
+		List<ModelUser> userList= daoUserImp.getAllUSerName();
+		model.addAttribute("userList",userList);
+		
+	    List<ModelOrderOwnerType> ownerTypeList= ownerType.getTypeName();			
+        model.addAttribute("ownerTypeList",ownerTypeList);
+		
+		List<ModelOrderOwner> ownerList= daoOrderOwnerImp.getAllOwner();
+		model.addAttribute("ownerList",ownerList);
+		
+		List<ModelItem> modelItemList= daoItem.getItemListActive();
+		model.addAttribute("modelItemList", modelItemList);
+		
+//		List<ModelDesign> modelDesignList= daoDesign.getDesignListActive();
+//		model.addAttribute("modelDesignList", modelDesignList);
+		
+		List<ModelUserCluster> clusterList= userClusterRepository.findAll();						
+		model.addAttribute("clusterList",clusterList);
+		
+	    model.addAttribute("productionPlanMst", modelProductionPlanMst);
+		model.addAttribute("userList",daoProductionPlan.getUserList());
+		
+		//popup list
+		List<ModelMachineType> machineTypeList= daoMachineTypeImp.getMachineName();
+		//System.out.println("machine id "+machineTypeList);
+		model.addAttribute("machineTypeList",machineTypeList);
+		
+		model.addAttribute("shiftList",daoMachineShift.getShiftList());
+		
+		
+		model.addAttribute("machineShiftList",DaoMachineShift.getMachineShiftList());
+		
+		System.out.println("test");
+		return "production_plan";
+		}
+		
+		catch(Exception e) {
+			System.out.println(e.getMessage());
+			return null;
+		}
+		
+		
+	
+	}

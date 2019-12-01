@@ -1,0 +1,11 @@
+To save date in database we have to use java.sql.Date. so we have to First convert java.util.Date to java.sql.Date.
+
+java.util.Date date = new java.util.Date();
+java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+
+N.B: java.sql.Date will return only date where  java.util.Date will return both time and date.
+
+To get time too you have to use java.sql.Timestamp instead of java.sql.Date.
+
+java.util.Date date = new java.util.Date();
+java.sql.Timestamp sqlDate = new java.sql.Timestamp(date.getTime());

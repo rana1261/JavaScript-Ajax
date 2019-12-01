@@ -1,0 +1,33 @@
+For detail table population we have to add listener in the master table.(Inside initialize method) like below
+
+
+
+table1.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Foo>() {
+    private boolean reverting = false;
+
+    @Override
+    public void changed(ObservableValue<? extends Foo> observable, Foo oldSelection, Foo newSelection) {
+        if (newSelection != null && !reverting) {
+if(condition){
+            Alert alert = new Alert(AlertType.CONFIRMATION, "Unsaved Data Will be Deleted. Continue" + " ?",
+                    ButtonType.YES, ButtonType.NO);
+            alert.showAndWait();
+
+            if (alert.getResult() == ButtonType.YES) {
+                //populate table2
+            }
+            else if (alert.getResult() == ButtonType.NO) {
+                 Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+				reverting = true;
+				table1.getSelectionModel().select(oldSelection);
+				tableLocation.refresh();
+				}
+			});
+            }
+        }
+}
+        reverting = false;
+    }
+});

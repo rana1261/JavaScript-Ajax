@@ -1,0 +1,128 @@
+ <script>
+     
+	    $('#saveWoChd').click(function(e) {
+	    
+	
+	  //  $('#wOChdTableId tr').filter(':has(:checkbox:checked)').each(function() { 
+	      $("#wOChdTableId tbody tr").each(function(){
+	    
+	    
+	  
+	    var $row = $(this).closest("tr"); 
+        var wOMstId = $row.find(".wOMstIdNew").text();
+        var orderItemQtyId =$row.find(".orderItemQtyTableRowClass").text();
+	    alert("Save Chd Data");
+	    let wOQty =$row.find('input[name="wOQty"]').val();
+	    let itemRate =$row.find('input[name="giveItemRate"]').val();
+		var currency =$row.find('#currencyId').val();
+		var commissionPerUOM =$row.find('#uOMListId').val();
+		let commissionRate = $row.find('input[name="giveCommission"]').val();
+		let commissionTotal =$row.find('input[name="totalCommission"]').val();
+		var remarks =$row.find(".remarksNew").text();
+		var x="";
+		
+		 var userId = document.getElementById("accessUserId").value;
+          
+		
+		/*   
+	                  var wOMstId= $(this).find("td:eq(1)").html();
+		              var orderItemQtyId = $(this).find("td:eq(2)").html();
+		              let wOQty = $(this).find('input[name="wOQty"]').val();
+		              let itemRate = $(this).find('input[name="giveItemRate"]').val();
+		              var currency = $(this).find('#currencyId').val();
+		              var commissionPerUOM = $(this).find('#uOMListId').val();
+		              let commissionRate = $(this).find('input[name="giveCommission"]').val();
+		              let commissionTotal = $(this).find('input[name="totalCommission"]').val();
+		              var remarks = $(this).find("td:eq(11)").html();
+		     */
+		
+		
+		if(currency==x)
+		{
+		alert("Please select currency");
+		}
+		else if(commissionPerUOM==x)
+		{
+		alert("Please select Comission Per UOM");
+		}
+		else{
+		
+		        
+		
+		var formData= { 
+	    		          
+	    			      "wOMstId" : wOMstId,	
+	    			      "orderItemQtyId" : orderItemQtyId,
+	    			      "itemQty" : wOQty,
+	    			      "itemRate" : itemRate,
+	    			      "currency" : currency,
+	    			      "remarks" : remarks,
+	    			      "commissionRate" : commissionRate,
+	    			      "commissionPerUOM" : commissionPerUOM,
+	    			      "commissionTotal" : commissionTotal,
+	    			       "enteredBy" : userId
+	    			         };
+	    			         
+	    	 $.ajax({
+   		            type : "POST",	    		           
+   		             url:"/workorderController/savewochd",
+   		            dataType : 'json',
+   			        data: formData,
+   		            success: function(result){
+   		            
+   		            var text="Work Order Chd Data saved successfully";
+		            document.getElementById("WOChdTableSaveMessage").innerHTML=text;
+   		            
+   		            
+   		            $('#wOChdTableId tbody').empty();
+   		            
+   		             $.each(result, function(i,modelWOChdListCustom){
+	    			       
+	    			     		
+	    			   
+	  var customerRow = '<tr>'  +
+	    			            
+	    			            '<td class="wOMstIdHidden" hidden>'+wOMstId+'</td>' +	
+	    			            '<td class="wOChdIdTd">'+modelWOChdListCustom.wOChdId+'</td>' +	    			            
+	    			            '<td class="orderItemQtyTableRowClass">' + modelWOChdListCustom.orderItemQuantityId + '</td>' +
+	    			            '<td>' + modelWOChdListCustom.itemName + '</td>' +
+	    			            '<td>' + modelWOChdListCustom.itemQty + '</td>' +
+	    			            '<td>' + modelWOChdListCustom.uomName+'</td>' +
+	    			            '<td>' + modelWOChdListCustom.itemRate + '</td>' +
+	    			            '<td>' + modelWOChdListCustom.currencyName + '</td>' +
+	    			            '<td>' + modelWOChdListCustom.commissionRate + '</td>' +
+	    			            '<td>' + modelWOChdListCustom.commissionPerUOM + '</td>' +
+	    			            '<td>' + modelWOChdListCustom.commissionTotal + '</td>' +
+	    			            '<td>' + modelWOChdListCustom.remarks + '</td>' +
+	    			            '<td>' + modelWOChdListCustom.activeStatus + '</td>' +
+	    			            '<td>' +'YES'+  '</td>' +
+	    			            '<td class="wOSpecButtonClass">' +'<a href="#" type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#exampleModal" >WO Spec</a>'+ '</td>' +
+	    			            //'<td class="">' +'<a type="button" class="btn btn-success btn-sm">WO Spec</a>'+ '</td>' +
+	    			            '<td>' + modelWOChdListCustom.wOChdItemQty + '</td>' +
+	    			           
+	    			            '<td class="editWOChdBtn">' + '<input type="button" value="Edit" class="btn btn-primary btn-md"  data-toggle="modal" data-target="#editModalWOChd">'+ '</td>' +
+	    			            '<td class=""> <button class=" btn btn-danger" >Remove</button>' +'</td>'
+			    		      
+			    		'</tr>';
+	    	$('#wOChdTableId tbody').append(customerRow);
+	    							
+	    				});        // each
+   		            	
+   		               
+   		            	
+   		            },	//success
+   		            
+   			 }); // ajax		         
+		
+		
+		}	//else condition
+		
+   			
+	    	 
+	    	 });  //check function
+	    		  
+
+        }); // save btn function
+     
+     </script> 
+     

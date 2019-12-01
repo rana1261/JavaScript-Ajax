@@ -1,0 +1,20 @@
+ <script type = "text/javascript">
+      
+      $("#pichdTable").on('click','.editqty',function(){
+         
+    	 	  
+    	  function update(id){
+        //Get contents off cell clicked
+        var content = document.getElementById("editqty").firstChild.nodeValue;
+        //Switch to text input field 
+        document.getElementById(id).innerHTML = "<input type = 'text' name = 'txtNewInput' id = 'txtNewInput' value = '" + content + "'/>";
+           
+        
+         }
+    	  
+      });
+    </script>
+
+
+
+'<td class="editqty" id="setqty" onclick = "update(this.id)" contentEditable>' + (pichd.itemQty - pichd.pIQtySaved) + '</td>' +

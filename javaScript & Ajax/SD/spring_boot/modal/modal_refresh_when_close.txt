@@ -1,0 +1,15 @@
+<script type="text/javascript">
+	
+	$('#modalPRMst').on('hidden.bs.modal', function (e) {
+  $(this)
+    .find("input,textarea,select")
+       .val('')
+       .end()
+    .find("input[type=checkbox], input[type=radio]")
+       .prop("checked", "")
+       .end();
+       $('#modalPRMstMessage').text("");         // used for span
+})
+
+
+</script>

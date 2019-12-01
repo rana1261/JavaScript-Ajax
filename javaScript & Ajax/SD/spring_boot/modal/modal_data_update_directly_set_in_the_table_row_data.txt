@@ -1,0 +1,34 @@
+/***************************************************/
+ This block code is important here.
+/**************************************************/
+
+/** Dynami table data populate */
+/*************************************************************/
+var customerRow = '<tr id="tr_' +pRMstCustom.pRMstId + '">' + 
+/**************************************************************/     
+	                                     '<td class="prmstId">' + pRMstCustom.pRMstId+'</td>' +
+							            '<td class="prmstDate">' + pRMstCustom.pRMstDate+ '</td>' +
+							            '<td class="clientName">' + pRMstCustom.clientName +'</td>' +
+							         
+							            '<td class="prmstRemarks">' +pRMstCustom.remarks+'</td>' +
+									   	'<td class="prmstActiveStatus" id="prmstActiveStatus' + rowIndexNumber+'">' + '<input type="checkbox" />' +status+'</td>' +
+										 '<td class="pRChdBtn">'+
+                     '<a href="#" type="button" class="btn btn-success btn-sm" data-toggle="modal" id="modalEditPRMstBtn"  data-target="#modalPRMst">Edit</a>'+
+                      /*'<a href="#" type="button" class="btn btn-success btn-sm" data-toggle="modal" id="modalPRChdBtn" data-target="#modalPRChd">PR Chd</a>' +  */
+                       '<a href="#" type="button" class="btn btn-success btn-sm" data-toggle="modal" id="modalPRChdBtn" data-target="#modalPRChd">PR Chd</a>' +
+
+
+                     '</td>' +
+										
+									
+						                 
+						         '</tr>';
+
+
+
+
+/*****************************************************************************/
+
+Table row is displayed at modal and save button at modal is clicked. Updated data populate in the called row.
+
+/*****************************************************************************/

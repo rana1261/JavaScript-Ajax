@@ -1,0 +1,36 @@
+To select all elements by clicking a single checkbox (All)
+
+1: Inside initialize method add
+
+	chkObject.setOnAction(e -> selectAllObjectBoxes(e));// here chkObject is the name/id of the checkbox outside the table which wll be named as All.
+
+
+2. Outside initialize method add a method
+
+	public static void selectAllObjectBoxes(ActionEvent e) {
+
+		for (ModelObject item : objectData) {
+
+			item.setSelect(((CheckBox) e.getSource()).isSelected()); // Must have a BooleanProperty variable along with getter setter in the ModelObjecct class. 
+
+		}
+
+	}
+
+3. In ModelObject class
+
+	private SimpleBooleanProperty select = new SimpleBooleanProperty(false);
+
+	public final SimpleBooleanProperty selectProperty() {
+		return this.select;
+	}
+	
+
+	public final boolean isSelect() {
+		return this.selectProperty().get();
+	}
+	
+
+	public final void setSelect(final boolean select) {
+		this.selectProperty().set(select);
+	}

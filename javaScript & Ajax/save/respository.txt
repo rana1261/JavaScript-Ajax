@@ -1,0 +1,18 @@
+package com.biziitech.attm.bg.repository;
+
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.biziitech.attm.bg.model.ModelCountry;
+import com.biziitech.attm.bg.model.ModelTestdb;
+
+public interface TestdbRepository extends JpaRepository<ModelTestdb,Long>{
+	
+	
+	
+
+}

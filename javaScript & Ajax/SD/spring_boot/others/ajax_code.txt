@@ -1,0 +1,114 @@
+      
+<script type="text/javascript">
+      	
+ $('#modalPRMstSave').click(
+  function(e) {
+e.preventDefault();
+ 	//alert("1");
+      
+      var status = document.getElementById("modalPRMstActive");
+      
+      var active;
+		    		 
+		    		 if (status.checked == true){
+		    			 active='1';
+		    		 }
+		    		 else{
+		    			 active='0';
+		    		 }
+        
+             //  alert("Working Modal Save Button");
+           
+             
+                
+                 var formData= { 
+                       
+                        "PRMstDate" : $("#modalPRMstDate").val(),
+                        "PRMstClientId" : $("#modalPRMstClientId").val(),
+                        "PRMstRemarks" : $("#modalPRMstRemarks").val(),
+                        "PRMstActiveStatus" : active
+                        
+                               };
+                               
+                             //  $('#prmstTable tbody').empty(); 
+
+                               //alert("2");
+                               
+                               $.ajax({
+                                                                  type : "POST",
+                                                                  url : "/prcontroller/prmstSave",
+                                                                  dataType : 'json',
+	                                                              data : formData,
+                                                                  
+                                                                  success: function(result){
+                                                                  	//alert("3");
+                                                                  
+                                                           /* document.getElementById("chdTableMassage").hidden=true;
+                                                                  
+                                                                   var text="Data saved succesfully,press close button";
+		            document.getElementById("productionPlanSaveMessage").innerHTML=text;  */
+                                                                  
+	                                                              $.each(result, function(i,pRMst){
+	                                                            
+      //alert("4");
+                
+                /*  '<td class="prmstActiveStatus">' +PRMstList.activeStatus+'</td>' + */
+
+                                                  var status;
+                                                                 
+                                                                 if(pRMst.activeStatus=0){
+                                                                  
+                                                                  status="No";
+                                                                 }
+                                                                 else{
+                                                                  status="Yes";
+                                                                 }
+              
+                var customerRow = '<tr>' +      
+	                                     '<td class="prmstId">' + pRMst.pRMstId+'</td>' +
+							            '<td class="prmstDate">' + pRMst.pRMstDate+ '</td>' +
+							            '<td class="clientName">' + pRMst.modelClient.clientName +'</td>' +
+							         
+							            '<td class="prmstRemarks">' +pRMst.remarks+'</td>' +
+									   	'<td class="prmstActiveStatus">' +status+'</td>' +
+										 '<td class="pRChdBtn">'+                
+                      '<a href="#"  type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#modalPRChd">PR Chd</a>' +
+
+                     '</td>' +
+										
+									
+						                 
+						         '</tr>';
+                
+                //alert("5");
+               
+ 
+ 
+					  
+		                                      $('#prmstTable tbody').append(customerRow);
+	                                                             
+	                                     //alert("6");                                                   
+	                                                                                     });        // each
+
+                                                                alert("SUCCESS");
+					 
+		                                          }   // end success
+	                                        
+	                                  /*      error : function(e) {
+		                                                        alert("ERROR: ", e);
+		                                                        console.log("ERROR: ", e);
+			                                                    }
+					                             */
+		                                    });   // end ajax
+		                                    
+		                               //     $('#productionPlanModal').modal('hide');
+                                       //     $('#productionPlanModal').close();
+                                       //     $('#productionPlanModal').dialog('close');
+                                       //     $('#productionPlanModal').empty(); 
+             
+             
+            
+                //alert("8");
+              });
+       
+ </script>

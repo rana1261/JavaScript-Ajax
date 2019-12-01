@@ -1,0 +1,295 @@
+/**************************************
+
+Create dynamic table row string in javascript function of save button which adds
+a row in base table with saved data in a modal 
+
+**************************************/
+
+/*****************************************************************
+
+Save data code
+
+
+*******************************************************************/
+/************************************************
+
+save data in a modal
+
+************************************************/
+
+/***********************************************
+1. html code for save button
+************************************************/
+
+button in modal footer
+=======================
+
+<div class="modal-footer">
+        <button  class="btn btn-primary form-control-sm" id="modalPRMstSave">Save</button> 
+        <!-- <input id="modalPRMstSave" value="Save" type="button" class="btn btn-primary btn-sm "> -->
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+
+
+/********************************************
+2. Write save method in dao and daoImp
+***********************************************/
+
+dao
+=====
+public void savePurchaseList(ModelPurchaseList modelPurchaseList);
+
+daoImp
+=======
+
+@Autowired
+	public PurchaseListRepository purchaseListRepository;
+
+
+@Override
+	public void savePurchaseList(ModelPurchaseList modelPurchaseList) {
+		
+		purchaseListRepository.save(modelPurchaseList);
+		
+	}
+
+/************************************
+3. Controller method
+*************************************/
+
+3.1. annotation 
+==================
+@RequestMapping(path="/prcontroller/prmstSave",method=RequestMethod.POST)
+	@ResponseBody
+
+3.2.  method declaration
+==============================
+public List<ModelPRMstCustom> pRMstSave(Model model,ModelPRMst modelPRMst) {
+
+
+}
+
+
+3.3.
+include @RequestParam if data from view is required to pass this method.
+=========================================================================
+
+public List<ModelPRMstCustom> pRMstSave(Model model,ModelPRMst modelPRMst,
+				  @RequestParam("PRMstId") Long pRMstId,
+		          @RequestParam("PRMstClientId") Long pRMstClientId,
+		          @DateTimeFormat(pattern="yyyy-MM-dd")@RequestParam("PRMstDate") Date pRMstDate,
+		          @RequestParam("PRMstRemarks") String pRMstRemarks,
+		          @RequestParam("PRMstActiveStatus") int pRMstActiveStatus
+		          ) {
+
+
+}
+
+
+
+3.4. Full method
+
+
+
+
+		public List<ModelPRMstCustom> pRMstSave(Model model,ModelPRMst modelPRMst,
+				  @RequestParam("PRMstId") Long pRMstId,
+		          @RequestParam("PRMstClientId") Long pRMstClientId,
+		          @DateTimeFormat(pattern="yyyy-MM-dd")@RequestParam("PRMstDate") Date pRMstDate,
+		          @RequestParam("PRMstRemarks") String pRMstRemarks,
+		          @RequestParam("PRMstActiveStatus") int pRMstActiveStatus
+		          ) {
+		
+		System.out.println("Save PRMst  ");
+
+		
+		    java.util.Date date = new java.util.Date();
+		    java.sql.Timestamp entryTime = new java.sql.Timestamp(date.getTime());
+		    
+		   // modelPRMst.setpRMstId(pRMstId);
+		    modelPRMst.setpRMstDate(pRMstDate);
+		    modelPRMst.setRemarks(pRMstRemarks);
+		    modelPRMst.setActiveStatus(pRMstActiveStatus);
+		    
+		    Long logonUserId=systemUserId;
+		    
+		    ModelUser modelUser1 = new ModelUser();
+	            modelUser1.setUserId(logonUserId);
+	        
+		    modelPRMst.setEnteredBy(modelUser1);
+		    modelPRMst.setEntryTimestamp(entryTime);
+		    
+		    ModelClient modelClient=new ModelClient();
+		    modelClient.setClientId(pRMstClientId);
+		    
+		    modelPRMst.setModelClient(modelClient);
+		    
+		    if (pRMstId !=null) {
+		    	
+		    	modelPRMst.setpRMstId(pRMstId);
+		    	modelPRMst.setUpdatedBy(modelUser1);
+		    	modelPRMst.setUpdateTimestap(entryTime);
+		    }
+		    
+		    daoPR.savePRMst(modelPRMst);
+		    
+		   
+		   List<ModelPRMstCustom> modelPRMstList=new ArrayList<ModelPRMstCustom>();
+		   
+		   modelPRMstList=daoPR.getPRMstSearchData(null,pRMstActiveStatus,modelPRMst.getpRMstId());
+		   System.out.println("size " + modelPRMstList.size() );
+		   
+		 
+		
+		return modelPRMstList;
+		
+		
+	
+	}
+
+
+/*********************************************
+4. add javascript code for button click
+**********************************************/
+
+
+<script type="text/javascript">
+      	
+ $('#modalPRMstSave').click(
+  function(e) {
+e.preventDefault();
+    
+      var status = document.getElementById("modalPRMstActive");
+      var pRMstId=$("#modalPRMstId").val();
+      
+      var active;
+		    		 
+		    		 if (status.checked == true){
+		    			 active='1';
+		    		 }
+		    		 else{
+		    			 active='0';
+		    		 }
+        
+          
+             
+ // data array to pass controller         
+                 var formData= { 
+                        "PRMstId" : $("#modalPRMstId").val(),
+                        "PRMstDate" : $("#modalPRMstDate").val(),
+                        "PRMstClientId" : $("#modalPRMstClientId").val(),
+                        "PRMstRemarks" : $("#modalPRMstRemarks").val(),
+                        "PRMstActiveStatus" : active
+                        
+                               };
+                               
+// ajax function                        
+                               $.ajax({
+                                        type : "POST",
+                                       url : "/prcontroller/prmstSave",
+                                       dataType : 'json',
+	                               data : formData,
+                                                                  
+                                       success: function(result){
+                                                                  	                                                                  
+	                               $.each(result, function(i,pRMstCustom){    
+                            
+                                       $('#modalPRMstId').val(pRMstCustom.pRMstId);
+
+                                       $('#modalPRMstMessage').text("Saved Successfully");
+
+                    
+	                                  });        // each
+
+                                           }   // end success                                        
+	                              
+		                             });   // end ajax          
+                
+              });
+       
+ </script>
+
+
+/*******************************************************************************
+
+table row string will be added in javascript function 
+
+
+*******************************************************************************/
+
+1. find base table
+
+id=purchaseListTable
+
+2. make table row string with saved record in each function
+
+ $.each(result, function(i,pRMstCustom){    
+
+var customRow=
+'<tr>' +
+'<td class="">' + pRMstCustom.column1+ '</td'>
+'<td class="">' + pRMstCustom.column2+ '</td'>
+'<td class="">' + pRMstCustom.model.column+ '</td'>
+'<td class="">' + '</td'> +
+'<td class="pRChdTableEditBtn">' + '<input type="button" value="Edit" class="btn btn-primary btn-md"  data-toggle="modal" data-target="#modalPRChdEdit">'+ '</td>' +
+
+}
+
+
+3. append or prepend row in table
+$('#purchaseListTable').append(customRow);
+
+
+
+/********************************************
+
+Suppose, you have a database column which need to show in table column with checkbox. For this, use the following code 
+
+***********************************************/
+
+4. Set a variable which will be used to make id of the checkbox
+
+ var rowIndexNumber=0;   
+
+5. Use this variable, dynmaically created table row string
+
+$.each(result, function(i,pRMstCustom){    
+
+var customRow=
+'<tr>' +
+'<td class="">' + pRMstCustom.column1+ '</td'>
+'<td class="">' + pRMstCustom.column2+ '</td'>
+'<td class="">' + pRMstCustom.model.column+ '</td'>
+'<td class="">' + '</td'> +
+/*************************************************
+'<td class ="pRChdTableStatus" id="pRChdTableStatus'  + rowIndexNumber + '">' + '</td>' +
+
+***************************************************/
+'<td class="pRChdTableEditBtn">' + '<input type="button" value="Edit" class="btn btn-primary btn-md"  data-toggle="modal" data-target="#modalPRChdEdit">'+ '</td>' +
+
+}
+
+
+6. After append or prepend table row in each function use the following code. This will create dynamically checkbox with database value
+
+var statusId='#pRChdTableStatus'+ rowIndexNumber; 
+	    	           if ( modelPRChd.activeStatus==1) {
+
+	    	           	
+
+	    	           //	status=true;
+	    	           $(statusId).html('<input type="checkbox" checked />') ;
+	    	           //alert("ttt");
+
+	    	           }
+
+	    	           else {
+	    	            $(statusId).html( '<input type="checkbox" />' );
+	    	         //alert("tttttt");
+
+	    	          }
+	    	           
+	    			   
+	                // alert("customer row " +$('#pRChdTable tbody').html() );
+
+	    	          rowIndexNumber=rowIndexNumber+1;

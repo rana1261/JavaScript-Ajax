@@ -1,0 +1,21 @@
+1. find master row required data
+
+<script type="text/javascript">
+      	
+
+$('#tableId').on('click', 'btn', function(){
+ 
+    $row=$(this).closest("tr");
+
+$valueCol1=$row.find('.col1').val();
+
+});
+
+
+2. pass data to controller through ajax
+
+
+
+
+
+3. get the data and show at child table

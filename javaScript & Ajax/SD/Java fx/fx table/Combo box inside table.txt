@@ -1,0 +1,46 @@
+Inside initialize method---
+
+//levelList== contains list from database which we want to show in the combo box
+colLevel.setCellValueFactory(new PropertyValueFactory<ModelBrUnit, String>("levelName"));
+		colLevel.setCellFactory(tc -> {
+			ComboBox combo = new ComboBox();
+			combo.getItems().addAll(levelList);
+
+			combo.setPrefWidth(colLevel.getWidth() - 5);
+			combo.setMaxWidth(colLevel.getWidth() - 5);
+			TableCell<ModelBrUnit, String> cell = new TableCell<ModelBrUnit, String>() {
+				@Override
+				protected void updateItem(String reason, boolean empty) {
+					super.updateItem(reason, empty);
+					if (empty) {
+						setGraphic(null);
+					} else {
+						combo.setValue(reason);
+						setText(this.getItem());
+						setGraphic(combo);
+					}
+				}
+			};
+			// combo.getSelectionModel().select(0);
+
+			combo.setOnAction(e -> {
+
+				oldLevel = tableUnit.getItems().get(cell.getIndex()).getLevelName();
+				tableUnit.getItems().get(cell.getIndex()).setLevelName(String.valueOf(combo.getValue()));
+				newLevel = tableUnit.getItems().get(cell.getIndex()).getLevelName();
+
+				if (oldLevel != newLevel)
+					cell.getTableView().getItems().get(cell.getTableRow().getIndex()).setEdit(true);
+
+			});
+			return cell;
+		});
+		
+		colLevel.setOnEditCommit(new EventHandler<CellEditEvent<ModelBrUnit, String>>() {
+			@Override
+			public void handle(TableColumn.CellEditEvent<ModelBrUnit, String> t) {
+				((ModelBrUnit) t.getTableView().getItems().get(t.getTablePosition().getRow()))
+						.setLevelName(t.getNewValue());
+			}
+		});
+		colLevel.setEditable(true);
